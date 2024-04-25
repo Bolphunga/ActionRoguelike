@@ -5,25 +5,22 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "SProjectileBase.h"
-#include "SMagicProjectile.generated.h"
-
-
+#include "SBlackHole.generated.h"
 
 UCLASS()
-class ACTIONROGUELIKE_API ASMagicProjectile : public ASProjectileBase
+class ACTIONROGUELIKE_API ASBlackHole : public ASProjectileBase
 {
 	GENERATED_BODY()
-
-public:
+	
+public:	
 	// Sets default values for this actor's properties
-	ASMagicProjectile();
+	ASBlackHole();
 
 protected:
-
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:
+public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 

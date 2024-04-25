@@ -10,6 +10,7 @@ class UCameraComponent;
 class USpringArmComponent;
 class USInteractionComponent;
 class UAniMontage;
+class UParticleSystem;
 
 
 UCLASS()
@@ -23,9 +24,18 @@ protected:
 	TSubclassOf<AActor> ProjectileClass;
 
 	UPROPERTY(EditAnywhere, Category = "Attack")
+	TSubclassOf<AActor> BlackholeProjectile;
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
 	UAnimMontage* AttackAnim;
 
-	FTimerHandle TimerHandle_PrimaryAttack;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Attack")
+	FTransform SpawnTransform;
+
+	UPROPERTY(EditAnywhere, Category = "Effects")
+	UParticleSystem* ExplosionEffect;
+
+	FTimerHandle TimerHandle;
 
 public:
 	// Sets default values for this character's properties
@@ -53,9 +63,17 @@ protected:
 
 	void PrimaryAttack_TimeElapsed();
 
+	void SecondaryAttack();
+
 	void Jump();
 
 	void PrimaryInteract();
+
+	void Teleport();
+
+	void TeleportDestroy();
+	
+	void Teleport_TimeElapsed();
 
 public:
 	// Called every frame

@@ -11,6 +11,7 @@ class USpringArmComponent;
 class USInteractionComponent;
 class UAniMontage;
 class UParticleSystem;
+class USAttributeComponent;
 
 
 UCLASS()
@@ -51,6 +52,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	USInteractionComponent* InteractionComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	USAttributeComponent* AttributeComp;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

@@ -26,7 +26,7 @@ ASTeleportProjectile::ASTeleportProjectile()
 
 // Called when the game starts or when spawned
 void ASTeleportProjectile::BeginPlay()
-{
+{ 
 	Super::BeginPlay();
 
 }

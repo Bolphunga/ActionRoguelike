@@ -10,7 +10,7 @@ class USphereComponent;
 class UProjectileMovementComponent;
 class UParticleSystemComponent;
 
-UCLASS()
+UCLASS(ABSTRACT) // "ABSTRACT" marks this class as incomplete, keeping this out of certain dropdown windows like SpawnActor in Unreal Editor
 class ACTIONROGUELIKE_API ASProjectileBase : public AActor
 {
 	GENERATED_BODY()
@@ -21,21 +21,27 @@ public:
 
 protected:
 
-	// Collision component
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+	UParticleSystem* ImpactVFX;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USphereComponent* SphereComp;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UProjectileMovementComponent* MovementComp;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UParticleSystemComponent* EffectComp;
 
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	// Virtual function that can be overriden by subclasses/child-classes
+	UFUNCTION()
+	virtual void OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	// BlueprintNativeEvent = C++ base implementation, can be expanded in Blueprints
+	// BlueprintCallable to allow child classes to trigger explosions
+	// Useful for expanding in Blueprint later on
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Damage")
+	void Explode();
 
+	virtual void PostInitializeComponents() override;
 };

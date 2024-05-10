@@ -24,11 +24,13 @@ ASCharacter::ASCharacter()
 	CameraComp->SetupAttachment(SpringArmComp);
 
 	InteractionComp = CreateDefaultSubobject<USInteractionComponent>("InteractionComp");
+
 	AttributeComp = CreateDefaultSubobject<USAttributeComponent>("AttributeComp");
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
-
 	bUseControllerRotationYaw = false;
+
+	AttackAnimDelay = 0.2f;
 }
 
 // Called when the game starts or when spawned
@@ -84,8 +86,8 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ASCharacter::PrimaryAttack);
 	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &ASCharacter::PrimaryInteract);
-	PlayerInputComponent->BindAction("SecondaryAttack", IE_Pressed, this, &ASCharacter::SecondaryAttack);
-	PlayerInputComponent->BindAction("Teleport", IE_Pressed, this, &ASCharacter::Teleport);
+	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &ASCharacter::Dash);
+	PlayerInputComponent->BindAction("BlackHoleAttack", IE_Pressed, this, &ASCharacter::BlackHoleAttack);
 
 
 }
@@ -95,81 +97,99 @@ void ASCharacter::PrimaryAttack()
 {
 	PlayAnimMontage(AttackAnim);
 
-	GetWorldTimerManager().SetTimer(TimerHandle, this, &ASCharacter::PrimaryAttack_TimeElapsed, 0.1f);
+	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::PrimaryAttack_TimeElapsed, AttackAnimDelay);
 
 	//GetWorldTimerManager().ClearTimer(TimerHandle_PrimaryAttack);
-
 }
 
 void ASCharacter::PrimaryAttack_TimeElapsed()
 {
-	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-
-	FTransform SpawnTM = FTransform(GetControlRotation(), HandLocation);
-
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	SpawnParams.Instigator = this;
-
-	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
+	SpawnProjectile(ProjectileClass);
 }
 
-void ASCharacter::SecondaryAttack()
+void ASCharacter::BlackHoleAttack()
 {
 	PlayAnimMontage(AttackAnim);
 
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	SpawnParams.Instigator = this;
+	GetWorldTimerManager().SetTimer(TimerHandle_BlackHoleAttack, this, &ASCharacter::BlackHoleAttack_TimeElapsed, AttackAnimDelay);
 
-	GetWorld()->SpawnActor<AActor>(BlackholeProjectile, SpawnTransform, SpawnParams);
+	//FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+
+	//FTransform SpawnTM = FTransform(GetControlRotation(), HandLocation);
+
+	//FActorSpawnParameters SpawnParams;
+	//SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	//SpawnParams.Instigator = this;
+
+	//AActor* Projectile = GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
+
+	//// Set the TeleportLocation member variable
+	//GetWorldTimerManager().SetTimer(TimerHandle, [this, Projectile]()
+	//	{
+	//		if (Projectile)
+	//		{
+	//			TeleportLocation = Projectile->GetActorLocation();
+	//		}
+	//	}, 0.2f, false);
 }
 
+void ASCharacter::BlackHoleAttack_TimeElapsed()
+{
+	SpawnProjectile(BlackHoleProjectileClass);
+	//SetActorLocation(TeleportLocation);
+}
 
-FVector TeleportLocation;
-
-void ASCharacter::Teleport()
+void ASCharacter::Dash()
 {
 	PlayAnimMontage(AttackAnim);
 
-	GetWorldTimerManager().SetTimer(TimerHandle, this, &ASCharacter::TeleportDestroy, 0.2f);
+	GetWorldTimerManager().SetTimer(TimerHandle_Dash, this, &ASCharacter::Dash_TimeElapsed, AttackAnimDelay);
+}
 
+void ASCharacter::Dash_TimeElapsed()
+{
+	SpawnProjectile(DashProjectileClass);
+}
+
+
+
+
+void ASCharacter::SpawnProjectile(TSubclassOf<AActor> ClassToSpawn)
+{
 	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-
-	FTransform SpawnTM = FTransform(GetControlRotation(), HandLocation);
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnParams.Instigator = this;
 
-	AActor* Projectile = GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
+	FCollisionShape Shape;
+	Shape.SetSphere(20.0f);
 
-	// Set the TeleportLocation member variable
-	GetWorldTimerManager().SetTimer(TimerHandle, [this, Projectile]()
-		{
-			if (Projectile)
-			{
-				TeleportLocation = Projectile->GetActorLocation();
-			}
-		}, 0.2f, false);
-}
+	// Ignore Player
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
 
+	FCollisionObjectQueryParams ObjParams;
+	ObjParams.AddObjectTypesToQuery(ECC_WorldDynamic);
+	ObjParams.AddObjectTypesToQuery(ECC_WorldStatic);
+	ObjParams.AddObjectTypesToQuery(ECC_Pawn);
 
-void ASCharacter::TeleportDestroy()
-{
-	if (ExplosionEffect)
+	FVector TraceStart = CameraComp->GetComponentLocation();
+
+	// Endpoint far into the look-at distance (not too far, still adjust somewhat towards crosshair on a miss)
+	FVector TraceEnd = TraceStart + (GetControlRotation().Vector() * 5000);
+	
+	FHitResult Hit;
+	if (GetWorld()->SweepSingleByObjectType(Hit, TraceStart, TraceEnd, FQuat::Identity, ObjParams, Shape, Params))
 	{
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ExplosionEffect, TeleportLocation);
+		TraceEnd = Hit.ImpactPoint;
 	}
 
-	// Set the teleportation timer to call Teleport_TimeElapsed after 0.2 seconds of the particle effect
-	GetWorldTimerManager().SetTimer(TimerHandle, this, &ASCharacter::Teleport_TimeElapsed, 0.2f);
-}
+	// Find new direction/rotation from hand pointing to impact point in world.
+	FRotator ProjRotation = FRotationMatrix::MakeFromX(TraceEnd - HandLocation).Rotator();
 
-void ASCharacter::Teleport_TimeElapsed()
-{
-
-	SetActorLocation(TeleportLocation);
+	FTransform SpawnTM = FTransform(ProjRotation, HandLocation);
+	GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnTM, SpawnParams);
 }
 
 void ASCharacter::Jump()
@@ -187,6 +207,16 @@ void ASCharacter::PrimaryInteract()
 }
 
 
+//void ascharacter::teleportdestroy()
+//{
+//	if (explosioneffect)
+//	{
+//		ugameplaystatics::spawnemitteratlocation(getworld(), explosioneffect, teleportlocation);
+//	}
+//
+//	// set the teleportation timer to call teleport_timeelapsed after 0.2 seconds of the particle effect
+//	getworldtimermanager().settimer(timerhandle, this, &ascharacter::teleport_timeelapsed, 0.2f);
+//}
 
 
 //void ASCharacter::PrimaryAttack_TimeElapsed(UCameraComponent* CameraComponent)

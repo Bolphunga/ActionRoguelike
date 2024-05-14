@@ -16,13 +16,7 @@ class ACTIONROGUELIKE_API USAttributeComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	USAttributeComponent();
-
-protected:
 	
-	
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
-	float HealthMax;
 
 public:	
 
@@ -40,4 +34,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
 	float Health;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
+	float HealthMax;
 };

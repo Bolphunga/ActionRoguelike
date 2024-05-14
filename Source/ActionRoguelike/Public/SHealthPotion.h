@@ -19,6 +19,8 @@ public:
 
 	void Interact_Implementation(APawn* InstigatorPawn);
 
+	bool bOnCooldown;
+
 	// Sets default values for this actor's properties
 	ASHealthPotion();
 
@@ -35,9 +37,9 @@ protected:
 
 	float PotionCooldown;
 
-	void Potion_Disabled();
+	void DisablePotion();
 
-	void Potion_Enabled();
+	void EnablePotion();
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

@@ -15,34 +15,44 @@ ASHealthPotion::ASHealthPotion()
 
 	PotionCooldown = 10.0f;
 
+	bOnCooldown = false;
 }
+
+// Interacting with the potion activates it if your health is below 100
+// When the potion activates, it becomes invisible and uninteractable and sets a timer that makes the potion usable after 10 seconds
+// After the cooldown period, the potion is visible and Interactable again
+
+
+
 
 void ASHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 {
+	if (!bOnCooldown)
+	{ 
 	USAttributeComponent* AttributeComponent = InstigatorPawn->FindComponentByClass<USAttributeComponent>();
 	if (AttributeComponent)
 	{
-		if (AttributeComponent->Health < 100)
+		if (AttributeComponent->Health < AttributeComponent->HealthMax)
 		{ 
 		AttributeComponent->Heal(HealAmount);
-		Potion_Disabled();
+		DisablePotion();
 		}
 	}
-	
+	}
 }
 
 
-
-void ASHealthPotion::Potion_Disabled()
+void ASHealthPotion::DisablePotion()
 {
-		GetWorldTimerManager().SetTimer(TimerHandle_PotionVisible, this, &ASHealthPotion::Potion_Enabled, PotionCooldown);
+		GetWorldTimerManager().SetTimer(TimerHandle_PotionVisible, this, &ASHealthPotion::EnablePotion, PotionCooldown);
 		PotionComp->SetVisibility(false);
-
+		bOnCooldown = true;	
 }
 
-void ASHealthPotion::Potion_Enabled()
+void ASHealthPotion::EnablePotion()
 {
 	PotionComp->SetVisibility(true);
+	bOnCooldown = false;
 }
 
 
@@ -51,13 +61,11 @@ void ASHealthPotion::Potion_Enabled()
 void ASHealthPotion::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
 void ASHealthPotion::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 

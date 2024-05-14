@@ -19,8 +19,10 @@ public:
 
 protected:
 	
+	
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
-	float Health;
+	float HealthMax;
 
 public:	
 
@@ -29,4 +31,13 @@ public:
 	
 	UPROPERTY(BlueprintAssignable)
 	FOnHealthChanged OnHealthChanged;
+
+	UFUNCTION(BlueprintCallable)
+	bool IsAlive();
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	void Heal(float Delta);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
+	float Health;
 };

@@ -7,6 +7,7 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Components/AudioComponent.h"
 
 
 // Sets default values
@@ -20,6 +21,9 @@ ASProjectileBase::ASProjectileBase()
 
 	EffectComp = CreateDefaultSubobject<UParticleSystemComponent>("EffectComp");
 	EffectComp->SetupAttachment(SphereComp);
+
+	SoundComp = CreateDefaultSubobject<UAudioComponent>("SoundComp");
+	SoundComp->SetupAttachment(SphereComp);
 
 	MovementComp = CreateDefaultSubobject<UProjectileMovementComponent>("MovementComp");
 	MovementComp->InitialSpeed = 8000.0f;
@@ -42,6 +46,8 @@ void ASProjectileBase::Explode_Implementation()
 	if (ensure(!IsPendingKill()))
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVFX, GetActorLocation(), GetActorRotation());
+		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
+		UGameplayStatics::PlayWorldCameraShake(this, Shake, GetActorLocation(), 0.0f, 50.0f);
 		Destroy();
 	}
 }
@@ -49,6 +55,6 @@ void ASProjectileBase::Explode_Implementation()
 void ASProjectileBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	// SphereComp->IgnoreActorWhenMoving(GetInstigator(), true);
+	SphereComp->IgnoreActorWhenMoving(GetInstigator(), true);
 }
 

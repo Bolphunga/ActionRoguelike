@@ -22,6 +22,7 @@ ASItemChest::ASItemChest()
 void ASItemChest::Interact_Implementation(APawn* InstigatorPawn)
 {
 	LidMesh->SetRelativeRotation(FRotator(TargetPitch, 0, 0));
+	UE_LOG(LogTemp, Warning, TEXT("Opening Chest"));
 }
 
 // Called when the game starts or when spawned

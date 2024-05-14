@@ -6,7 +6,10 @@
 #include "SProjectileBase.h"
 #include "SDashProjectile.generated.h"
 
+
+class USoundBase;
 /**
+
  * 
  */
 UCLASS()
@@ -21,6 +24,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Teleport")
 	float DetonateDelay;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+	USoundBase* TeleportSound;
 
 	// Handle to cancel timer if we already hit something
 	FTimerHandle TimerHandle_DelayedDetonate;

@@ -8,6 +8,8 @@
 #include "SInteractionComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "SAttributeComponent.h"
+#include "Kismet/GameplayStatics.h"
+
 
 
 // Sets default values
@@ -32,6 +34,13 @@ ASCharacter::ASCharacter()
 
 	AttackAnimDelay = 0.2f;
 }
+
+void ASCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	AttributeComp->OnHealthChanged.AddDynamic(this, &ASCharacter::OnHealthChanged);
+}
+
 
 // Called when the game starts or when spawned
 void ASCharacter::BeginPlay()
@@ -88,8 +97,6 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &ASCharacter::PrimaryInteract);
 	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &ASCharacter::Dash);
 	PlayerInputComponent->BindAction("BlackHoleAttack", IE_Pressed, this, &ASCharacter::BlackHoleAttack);
-
-
 }
 
 void ASCharacter::PrimaryAttack()
@@ -112,25 +119,6 @@ void ASCharacter::BlackHoleAttack()
 	PlayAnimMontage(AttackAnim);
 
 	GetWorldTimerManager().SetTimer(TimerHandle_BlackHoleAttack, this, &ASCharacter::BlackHoleAttack_TimeElapsed, AttackAnimDelay);
-
-	//FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-
-	//FTransform SpawnTM = FTransform(GetControlRotation(), HandLocation);
-
-	//FActorSpawnParameters SpawnParams;
-	//SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	//SpawnParams.Instigator = this;
-
-	//AActor* Projectile = GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
-
-	//// Set the TeleportLocation member variable
-	//GetWorldTimerManager().SetTimer(TimerHandle, [this, Projectile]()
-	//	{
-	//		if (Projectile)
-	//		{
-	//			TeleportLocation = Projectile->GetActorLocation();
-	//		}
-	//	}, 0.2f, false);
 }
 
 void ASCharacter::BlackHoleAttack_TimeElapsed()
@@ -190,6 +178,10 @@ void ASCharacter::SpawnProjectile(TSubclassOf<AActor> ClassToSpawn)
 
 	FTransform SpawnTM = FTransform(ProjRotation, HandLocation);
 	GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnTM, SpawnParams);
+
+	UGameplayStatics::SpawnEmitterAttached(MuzzleFlash, GetMesh(), "Muzzle_01", HandLocation, ProjRotation);
+	//UGameplayStatics::SpawnEmitterAtLocation(this, MuzzleFlash, HandLocation, ProjRotation);
+	//UGameplayStatics::PlayWorldCameraShake(this, Shake, TraceEnd, 0.0f, 50.0f);
 }
 
 void ASCharacter::Jump()
@@ -205,6 +197,20 @@ void ASCharacter::PrimaryInteract()
 		InteractionComp->PrimaryInteract();
 	}
 }
+
+void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta)
+{
+	if (Delta < 0.0f)
+	{
+		GetMesh()->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->TimeSeconds);
+	}
+	if (NewHealth <= 0.0f && Delta < 0.0f)
+	{
+		APlayerController* PC = Cast<APlayerController>(GetController());
+		DisableInput(PC);
+	}
+}
+
 
 
 //void ascharacter::teleportdestroy()

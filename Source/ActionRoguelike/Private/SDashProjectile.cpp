@@ -29,6 +29,7 @@ void ASDashProjectile::Explode_Implementation()
 	GetWorldTimerManager().ClearTimer(TimerHandle_DelayedDetonate);
 
 	UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVFX, GetActorLocation(), GetActorRotation());
+	UGameplayStatics::PlaySoundAtLocation(this, TeleportSound, GetActorLocation());
 
 	EffectComp->DeactivateSystem();
 

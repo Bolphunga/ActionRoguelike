@@ -18,13 +18,6 @@ ASHealthPotion::ASHealthPotion()
 	bOnCooldown = false;
 }
 
-// Interacting with the potion activates it if your health is below 100
-// When the potion activates, it becomes invisible and uninteractable and sets a timer that makes the potion usable after 10 seconds
-// After the cooldown period, the potion is visible and Interactable again
-
-
-
-
 void ASHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 {
 	if (!bOnCooldown)
@@ -41,7 +34,6 @@ void ASHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 	}
 }
 
-
 void ASHealthPotion::DisablePotion()
 {
 		GetWorldTimerManager().SetTimer(TimerHandle_PotionVisible, this, &ASHealthPotion::EnablePotion, PotionCooldown);
@@ -54,8 +46,6 @@ void ASHealthPotion::EnablePotion()
 	PotionComp->SetVisibility(true);
 	bOnCooldown = false;
 }
-
-
 
 // Called when the game starts or when spawned
 void ASHealthPotion::BeginPlay()

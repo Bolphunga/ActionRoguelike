@@ -8,8 +8,6 @@
 #include "SHealthPotion.generated.h"
 
 
-//DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnItemInteract, AActor*, InstigatorActor, USAttributeComponent*, OwningComp, float, NewHealth, float, Delta);
-
 UCLASS()
 class ACTIONROGUELIKE_API ASHealthPotion : public ASConsumableBase
 {
@@ -23,10 +21,6 @@ public:
 
 	// Sets default values for this actor's properties
 	ASHealthPotion();
-
-	//UPROPERTY(BlueprintAssignable)
-	//FOnItemInteract OnItemInteract;
-	
 
 protected:
 

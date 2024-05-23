@@ -20,7 +20,6 @@ void ASDashProjectile::BeginPlay()
 
 	GetWorldTimerManager().SetTimer(TimerHandle_DelayedDetonate, this, &ASDashProjectile::Explode, DetonateDelay);
 
-	UE_LOG(LogTemp, Warning, TEXT("Projectile Detonate Delay: %f"), DetonateDelay);
 }
 
 void ASDashProjectile::Explode_Implementation()
@@ -40,8 +39,6 @@ void ASDashProjectile::Explode_Implementation()
 	GetWorldTimerManager().SetTimer(TimerHandle_DelayedTeleport, this, &ASDashProjectile::TeleportInstigator, TeleportDelay);
 	// Skip base implementation as it will destroy actor (We need to stay alive a bit longer to finish the second timer)
 	//Super::Explode_Implementation();
-
-	UE_LOG(LogTemp, Warning, TEXT("Projectile Teleport Delay: %f"), TeleportDelay);
 }
 
 void ASDashProjectile::TeleportInstigator()

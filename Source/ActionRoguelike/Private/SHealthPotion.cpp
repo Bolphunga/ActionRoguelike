@@ -25,9 +25,9 @@ void ASHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 	USAttributeComponent* AttributeComponent = InstigatorPawn->FindComponentByClass<USAttributeComponent>();
 	if (AttributeComponent)
 	{
-		if (AttributeComponent->Health < AttributeComponent->HealthMax)
+		if (ensure(AttributeComponent) && !AttributeComponent->IsFullHealth())
 		{ 
-		AttributeComponent->Heal(HealAmount);
+		AttributeComponent->ApplyHealthChange(this, HealAmount);
 		DisablePotion();
 		}
 	}
@@ -46,16 +46,3 @@ void ASHealthPotion::EnablePotion()
 	PotionComp->SetVisibility(true);
 	bOnCooldown = false;
 }
-
-// Called when the game starts or when spawned
-void ASHealthPotion::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
-// Called every frame
-void ASHealthPotion::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-

@@ -8,7 +8,7 @@
 
 
 class UPawnSensingComponent;
-
+class USAttributeComponent;
 
 UCLASS()
 class ACTIONROGUELIKE_API ASAICharacter : public ACharacter
@@ -24,7 +24,18 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	UPawnSensingComponent* PawnSensingComp;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	USAttributeComponent* AttributeComp;
+
+	float HealAmount;
+
+	void SetTargetActor(AActor* NewTarget);
+
 	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);
+
 	void PostInitializeComponents() override;
+
+	UFUNCTION()
+	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
 };

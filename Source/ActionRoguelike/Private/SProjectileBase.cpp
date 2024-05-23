@@ -20,10 +20,10 @@ ASProjectileBase::ASProjectileBase()
 	RootComponent = SphereComp;
 
 	EffectComp = CreateDefaultSubobject<UParticleSystemComponent>("EffectComp");
-	EffectComp->SetupAttachment(SphereComp);
+	EffectComp->SetupAttachment(RootComponent);
 
 	SoundComp = CreateDefaultSubobject<UAudioComponent>("SoundComp");
-	SoundComp->SetupAttachment(SphereComp);
+	SoundComp->SetupAttachment(RootComponent);
 
 	MovementComp = CreateDefaultSubobject<UProjectileMovementComponent>("MovementComp");
 	MovementComp->InitialSpeed = 8000.0f;

@@ -21,7 +21,7 @@ public:
 public:	
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
-	bool ApplyHealthChange(float Delta);
+	bool ApplyHealthChange(AActor* InstigatorActor, float Delta);
 	
 	UPROPERTY(BlueprintAssignable)
 	FOnHealthChanged OnHealthChanged;
@@ -30,7 +30,10 @@ public:
 	bool IsAlive();
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
-	void Heal(float Delta);
+	bool IsFullHealth();
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	bool IsLowHealth();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
 	float Health;

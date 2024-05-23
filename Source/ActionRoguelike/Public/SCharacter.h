@@ -43,6 +43,9 @@ protected:
 	FTimerHandle TimerHandle_Dash;
 	FTimerHandle TimerHandle_BlackHoleAttack;
 
+	UPROPERTY(VisibleAnywhere, Category = "Effects")
+	FName HandSocketname;
+
 	float AttackAnimDelay;
 
 public:
@@ -90,6 +93,8 @@ protected:
 	void BlackHoleAttack_TimeElapsed();
 
 	void SpawnProjectile(TSubclassOf<AActor> ClassToSpawn);
+	
+	void StartAttackEffects();
 
 public:
 	// Called every frame

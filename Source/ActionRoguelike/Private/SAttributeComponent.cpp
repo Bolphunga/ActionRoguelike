@@ -17,22 +17,24 @@ bool USAttributeComponent::IsAlive()
 	UE_LOG(LogTemp, Log, TEXT("Health Changed: %s"), *FString::SanitizeFloat(Health));
 }
 
-void USAttributeComponent::Heal(float Delta)
-{
-	Health += Delta;
-	Health = FMath::Clamp(Health, 0.0f, HealthMax);
 
-	OnHealthChanged.Broadcast(nullptr, this, Health, Delta);
+
+bool USAttributeComponent::IsFullHealth()
+{
+	return Health == HealthMax;
 }
 
-bool USAttributeComponent::ApplyHealthChange(float Delta)
+bool USAttributeComponent::IsLowHealth()
+{
+	return Health <= 30.f;
+}
+
+bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delta)
 {
 	Health += Delta;
 	Health = FMath::Clamp(Health, 0.0f, HealthMax);
 
-	OnHealthChanged.Broadcast(nullptr, this, Health, Delta);
-
-	UE_LOG(LogTemp, Log, TEXT("Health Changed: %s"), *FString::SanitizeFloat(Health));
+	OnHealthChanged.Broadcast(InstigatorActor, this, Health, Delta);
 
 	return true;
 }

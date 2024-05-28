@@ -10,7 +10,8 @@ USAttributeComponent::USAttributeComponent()
 	Health = 100.0f;
 }
 
-bool USAttributeComponent::IsAlive()
+
+bool USAttributeComponent::IsAlive() const
 {
 	return Health > 0.0f;
 
@@ -19,7 +20,7 @@ bool USAttributeComponent::IsAlive()
 
 
 
-bool USAttributeComponent::IsFullHealth()
+bool USAttributeComponent::IsFullHealth() const
 {
 	return Health == HealthMax;
 }
@@ -29,8 +30,24 @@ bool USAttributeComponent::IsLowHealth()
 	return Health <= 30.f;
 }
 
+bool USAttributeComponent::Kill(AActor* InstigatorActor)
+{
+	return ApplyHealthChange(InstigatorActor, -GetHealthmax());
+}
+
+float USAttributeComponent::GetHealthmax() const
+{
+	return HealthMax ;
+}
+
+
 bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delta)
 {
+	if (!GetOwner()->CanBeDamaged())
+	{
+		return false;
+	}
+
 	Health += Delta;
 	Health = FMath::Clamp(Health, 0.0f, HealthMax);
 
@@ -39,6 +56,24 @@ bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delt
 	return true;
 }
 
+USAttributeComponent* USAttributeComponent::GetAttributes(AActor* FromActor)
+{
+	if (FromActor)
+	{
+		return Cast<USAttributeComponent>(FromActor->GetComponentByClass(USAttributeComponent::StaticClass()));
+	}
+	return nullptr;
+}
+
+bool USAttributeComponent::IsActorAlive(AActor* Actor)
+{
+	USAttributeComponent* AttributeComp = GetAttributes(Actor);
+	if (AttributeComp)
+	{
+		return AttributeComp->IsAlive();
+	}
+	return false;
+}
 
 
 

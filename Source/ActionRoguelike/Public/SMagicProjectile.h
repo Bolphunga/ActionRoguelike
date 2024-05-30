@@ -23,6 +23,6 @@ protected:
 	void OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Attack")
-	float Damage;
+	float DamageAmount;
 
 };

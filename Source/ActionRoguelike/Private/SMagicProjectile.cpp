@@ -6,6 +6,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "SAttributeComponent.h"
+#include "SGameplayFunctionLibrary.h"
 
 
 
@@ -17,7 +18,7 @@ ASMagicProjectile::ASMagicProjectile()
 	//SphereComp->SetCollisionObjectType(ECC_WorldDynamic);
 	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &ASMagicProjectile::OnActorOverlap);
 
-	Damage = -20.0f;
+	DamageAmount = -20.0f;
 }
 
 
@@ -25,13 +26,17 @@ ASMagicProjectile::ASMagicProjectile()
 void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor && OtherActor != GetInstigator())
-	{
-		USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(OtherActor->GetComponentByClass(USAttributeComponent::StaticClass()));
-		if (AttributeComp)
 		{
-			AttributeComp->ApplyHealthChange(GetInstigator(), Damage);
+		//	USAttributeComponent* AttributeComp = USAttributeComponent::GetAttributes(OtherActor);
+		//	if (AttributeComp)
+		//	{
+		//		AttributeComp->ApplyHealthChange(GetInstigator(), Damage);
 
-			Destroy();
+		//		Explode();
+		//	}
+		if (USGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(), OtherActor, DamageAmount, SweepResult))
+		{
+			Explode();
 		}
 	}
 }

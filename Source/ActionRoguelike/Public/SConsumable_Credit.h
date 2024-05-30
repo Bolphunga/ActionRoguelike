@@ -3,26 +3,25 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
 #include "SConsumableBase.h"
-#include "SHealthPotion.generated.h"
+#include "SConsumable_Credit.generated.h"
 
-
-class UStaticmeshComponent;
-
+/**
+ * 
+ */
 UCLASS()
-class ACTIONROGUELIKE_API ASHealthPotion : public ASConsumableBase
+class ACTIONROGUELIKE_API ASConsumable_Credit : public ASConsumableBase
 {
 	GENERATED_BODY()
 	
-public:	
+	public:	
 
-	ASHealthPotion();
+		ASConsumable_Credit();
 
 	void Interact_Implementation(APawn* InstigatorPawn);
 
 protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Consumables")
-	float HealAmount;
+	float CreditAmount;
 };

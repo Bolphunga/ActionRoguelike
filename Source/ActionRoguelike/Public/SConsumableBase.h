@@ -17,13 +17,22 @@ class ACTIONROGUELIKE_API ASConsumableBase : public AActor, public ISGameplayInt
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
+	
 	ASConsumableBase();
 
+	void Interact_Implementation(APawn* InstigatorPawn);
+
+	bool bOnCooldown;
+
+	UPROPERTY(EditAnywhere, Category = "Consumables")
+	float ItemCooldown;
+
+	void ShowConsumable();
+
+	void HideConsumable();
 
 protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Consumables")
-	UStaticMeshComponent* PotionComp;
-
+	UStaticMeshComponent* MeshComp;
 };

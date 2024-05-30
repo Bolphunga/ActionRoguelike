@@ -14,27 +14,20 @@ void USBTService_CheckLowHealth::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 	
-	UBlackboardComponent* BlackBoardComp = OwnerComp.GetBlackboardComponent();
-	if (BlackBoardComp)
-	{
-		AAIController* AIC = OwnerComp.GetAIOwner();
-		if (ensure(AIC))
-		{
-			APawn* AIPawn = AIC->GetPawn();
+
+			APawn* AIPawn = OwnerComp.GetAIOwner()->GetPawn();
 			if (ensure(AIPawn))
 			{
 				USAttributeComponent* AttributeComp = USAttributeComponent::GetAttributes(AIPawn);
 				if (ensure(AttributeComp))
 				{
-					bool bIsLowHealth = AttributeComp->Health <= 30.f;
+					bool bIsLowHealth = AttributeComp->GetHealth() <= 30.f;
 
+					UBlackboardComponent* BlackBoardComp = OwnerComp.GetBlackboardComponent();
 					BlackBoardComp->SetValueAsBool(HealthLevelKey.SelectedKeyName, bIsLowHealth);
 					float MinionCurrentHealth =  AttributeComp->Health;
 
 					UE_LOG(LogTemp, Log, TEXT("MinionCurrentHealth"));
 				}
-				
 			}
-		}
-	}
 }

@@ -12,37 +12,25 @@
 ASHealthPotion::ASHealthPotion()
 {
 	HealAmount = 15;
-
-	PotionCooldown = 10.0f;
-
-	bOnCooldown = false;
 }
 
 void ASHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 {
+	if (!ensure(InstigatorPawn))
+	{
+		return;
+	}
+
 	if (!bOnCooldown)
 	{ 
-	USAttributeComponent* AttributeComponent = InstigatorPawn->FindComponentByClass<USAttributeComponent>();
-	if (AttributeComponent)
+	USAttributeComponent* AttributeComp = USAttributeComponent::GetAttributes(InstigatorPawn);
+	if (AttributeComp)
 	{
-		if (ensure(AttributeComponent) && !AttributeComponent->IsFullHealth())
+		if (ensure(AttributeComp) && !AttributeComp->IsFullHealth())
 		{ 
-		AttributeComponent->ApplyHealthChange(this, HealAmount);
-		DisablePotion();
+		AttributeComp->ApplyHealthChange(this, HealAmount);
+		HideConsumable();
 		}
 	}
 	}
-}
-
-void ASHealthPotion::DisablePotion()
-{
-		GetWorldTimerManager().SetTimer(TimerHandle_PotionVisible, this, &ASHealthPotion::EnablePotion, PotionCooldown);
-		PotionComp->SetVisibility(false);
-		bOnCooldown = true;	
-}
-
-void ASHealthPotion::EnablePotion()
-{
-	PotionComp->SetVisibility(true);
-	bOnCooldown = false;
 }

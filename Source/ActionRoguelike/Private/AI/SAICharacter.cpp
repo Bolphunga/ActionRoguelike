@@ -10,6 +10,8 @@
 #include "SWorldUserWidget.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "SPlayerState.h"
+
 
 // Sets default values
 ASAICharacter::ASAICharacter()
@@ -20,7 +22,7 @@ ASAICharacter::ASAICharacter()
 
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
 	GetMesh()->SetGenerateOverlapEvents(true);
 
 	TimeToHitParamName = "TimeToHit";

@@ -6,7 +6,6 @@
 #include "GameFramework/Character.h"
 #include "SAICharacter.generated.h"
 
-
 class UPawnSensingComponent;
 class USAttributeComponent;
 class UUserWidget;

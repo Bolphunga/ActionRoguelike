@@ -25,4 +25,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Consumables")
 	float HealAmount;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Consumables")
+	float HealthCost;
 };

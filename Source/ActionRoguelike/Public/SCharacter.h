@@ -12,6 +12,9 @@ class USInteractionComponent;
 class UAniMontage;
 class UParticleSystem;
 class USAttributeComponent;
+class USActionComponent;
+//class ASPlayerState;
+
 
 
 UCLASS()
@@ -24,36 +27,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Effects")
 	FName TimeToHitParamName;
 
-	UPROPERTY(EditAnywhere, Category = "Attack")
-	TSubclassOf<AActor> ProjectileClass;
-
-	UPROPERTY(EditAnywhere, Category = "Attack")
-	TSubclassOf<AActor> BlackHoleProjectileClass;
-
-	UPROPERTY(EditAnywhere, Category = "Attack")
-	TSubclassOf<AActor> DashProjectileClass;
-
-	UPROPERTY(EditAnywhere, Category = "Attack")
-	UAnimMontage* AttackAnim;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Attack")
-	FTransform SpawnTransform;
-
 	UPROPERTY(EditAnywhere, Category = "Effects")
 	UParticleSystem* ExplosionEffect;
-
-	FTimerHandle TimerHandle_PrimaryAttack;
-	FTimerHandle TimerHandle_Dash;
-	FTimerHandle TimerHandle_BlackHoleAttack;
-
-	UPROPERTY(VisibleAnywhere, Category = "Effects")
-	FName HandSocketname;
-
-	float AttackAnimDelay;
-
-public:
-	// Sets default values for this character's properties
-
 
 protected:
 
@@ -69,45 +44,45 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	USAttributeComponent* AttributeComp;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	USActionComponent* ActionComp;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Effects")
 	UParticleSystem* MuzzleFlash;
 
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 
 	void MoveForward(float value);
 
 	void MoveRight(float value);
 
+	void SprintStart();
+
+	void SprintStop();
+
 	void PrimaryAttack();
 
-	void PrimaryAttack_TimeElapsed();
-
 	void Dash();
-
-	void Dash_TimeElapsed();
 
 	void Jump();
 
 	void PrimaryInteract();
 
 	void BlackHoleAttack();
-	
-	void BlackHoleAttack_TimeElapsed();
-
-	void SpawnProjectile(TSubclassOf<AActor> ClassToSpawn);
-	
-	void StartAttackEffects();
-
 
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
+
+	UFUNCTION()
+	void OnCreditChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
 
 	virtual void PostInitializeComponents() override;
 
 	virtual FVector GetPawnViewLocation() const override;
 
 public:
+
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	//ASPlayerState* CustomPlayerState;
 
 	ASCharacter();
 

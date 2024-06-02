@@ -10,6 +10,8 @@
 #include "EngineUtils.h"
 #include "DrawDebugHelpers.h"
 #include "SCharacter.h"
+#include "SPlayerState.h"
+
 
 
 static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"), true, TEXT("Enable spawning of bots via timer."), ECVF_Cheat);
@@ -18,6 +20,8 @@ static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"), true, TEXT
 ASGameModeBase::ASGameModeBase()
 {
 	SpawnTimerInterval = 2.f;
+
+	CreditsAdded = 15.f;
 }
 void ASGameModeBase::StartPlay()
 {
@@ -128,3 +132,14 @@ void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
 	UE_LOG(LogTemp, Log, TEXT("OnActorKilled: Victim: %s, Killer: %s"), *GetNameSafe(VictimActor), *GetNameSafe(Killer));
 }
 
+bool ASGameModeBase::KillReward()
+{
+	ASPlayerState* PS = Cast<ASPlayerState>(GetOwner()->GetInstigatorController()->GetPlayerState<APlayerState>());
+	if (PS)
+	{
+		PS->ApplyCreditChange(CreditsAdded);
+
+		UE_LOG(LogTemp, Log, TEXT("Credits Added: %f"), PS->Credits);
+	}
+	return true;
+}

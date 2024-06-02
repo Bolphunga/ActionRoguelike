@@ -23,5 +23,5 @@ class ACTIONROGUELIKE_API ASConsumable_Credit : public ASConsumableBase
 protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Consumables")
-	float CreditAmount;
+	float CreditsAdded;
 };

@@ -43,6 +43,9 @@ protected:
 	UFUNCTION()
 	void RespawnTimerElapsed(AController* Controller);
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Consumables")
+	float CreditsAdded;
+
 public:
 
 	ASGameModeBase();
@@ -53,4 +56,6 @@ public:
 
 	UFUNCTION(Exec)
 	void KillAll();
+
+	bool KillReward();
 };

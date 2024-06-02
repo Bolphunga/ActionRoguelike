@@ -5,13 +5,15 @@
 #include "Components/StaticMeshComponent.h"
 #include "SAttributeComponent.h"
 #include "SInteractionComponent.h"
+#include "SPlayerState.h"
 
 
 
 // Sets default values
 ASHealthPotion::ASHealthPotion()
 {
-	HealAmount = 15;
+	HealAmount = 15.f;
+	HealthCost = -15.f;
 }
 
 void ASHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
@@ -22,15 +24,24 @@ void ASHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 	}
 
 	if (!bOnCooldown)
+
 	{ 
-	USAttributeComponent* AttributeComp = USAttributeComponent::GetAttributes(InstigatorPawn);
-	if (AttributeComp)
-	{
-		if (ensure(AttributeComp) && !AttributeComp->IsFullHealth())
-		{ 
-		AttributeComp->ApplyHealthChange(this, HealAmount);
-		HideConsumable();
+		ASPlayerState* PS = Cast<ASPlayerState>(InstigatorPawn->GetPlayerState<APlayerState>());
+		if (PS && PS->Credits >= -HealthCost)
+		{
+			USAttributeComponent* AttributeComp = USAttributeComponent::GetAttributes(InstigatorPawn);
+			if (AttributeComp)
+			{
+				if (ensure(AttributeComp) && !AttributeComp->IsFullHealth())
+				{ 
+				AttributeComp->ApplyHealthChange(this, HealAmount);
+
+				HideConsumable();
+				}
+			}
+
+			PS->ApplyCreditChange(HealthCost);
 		}
 	}
-	}
+
 }

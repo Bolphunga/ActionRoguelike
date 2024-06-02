@@ -2,12 +2,14 @@
 
 
 #include "SConsumable_Credit.h"
+#include "SPlayerState.h"
+
 
 
 
 ASConsumable_Credit::ASConsumable_Credit()
 {
-	CreditAmount = 15;
+	CreditsAdded = 15;
 }
 
 
@@ -17,5 +19,18 @@ void ASConsumable_Credit::Interact_Implementation(APawn* InstigatorPawn)
 		if (!ensure(InstigatorPawn))
 		{
 			return;
+		}
+
+		if (!bOnCooldown)
+
+		{
+			ASPlayerState* PS = Cast<ASPlayerState>(InstigatorPawn->GetPlayerState<APlayerState>());
+			if (PS)
+			{
+				PS->ApplyCreditChange(CreditsAdded);
+				HideConsumable();
+
+				UE_LOG(LogTemp, Log, TEXT("Credits Added: %f"), PS->Credits);
+			}
 		}
 }

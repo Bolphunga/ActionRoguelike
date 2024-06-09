@@ -26,22 +26,17 @@ void ASHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 	if (!bOnCooldown)
 
 	{ 
-		ASPlayerState* PS = Cast<ASPlayerState>(InstigatorPawn->GetPlayerState<APlayerState>());
-		if (PS && PS->Credits >= -HealthCost)
+		ASPlayerState* PS = InstigatorPawn->GetPlayerState<ASPlayerState>();
+		if (PS && PS->GetCredits() >= -HealthCost)
 		{
 			USAttributeComponent* AttributeComp = USAttributeComponent::GetAttributes(InstigatorPawn);
-			if (AttributeComp)
-			{
 				if (ensure(AttributeComp) && !AttributeComp->IsFullHealth())
 				{ 
-				AttributeComp->ApplyHealthChange(this, HealAmount);
+					AttributeComp->ApplyHealthChange(this, HealAmount);
 
-				HideConsumable();
+					HideConsumable();
 				}
-			}
-
-			PS->ApplyCreditChange(HealthCost);
+				PS->ApplyCreditChange(HealthCost);
 		}
 	}
-
 }

@@ -11,6 +11,8 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "SPlayerState.h"
+#include "SActionComponent.h"
+
 
 
 // Sets default values
@@ -19,6 +21,8 @@ ASAICharacter::ASAICharacter()
 	PawnSensingComp = CreateDefaultSubobject<UPawnSensingComponent>("PawnSensingComp");
 	
 	AttributeComp = CreateDefaultSubobject<USAttributeComponent>("AttributeComp");
+
+	ActionComp = CreateDefaultSubobject<USActionComponent>("ActionComp");
 
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
@@ -93,6 +97,16 @@ void ASAICharacter::SetTargetActor(AActor* NewTarget)
 void ASAICharacter::OnPawnSeen(APawn* Pawn)
 {
 	SetTargetActor(Pawn);
+	
+	if (ActiveAlertWidget == nullptr)
+	{
+		ActiveAlertWidget = CreateWidget< USWorldUserWidget>(GetWorld(), PlayerSpottedWidgetClass);
+		if (ActiveAlertWidget)
+		{
+			ActiveAlertWidget->AttachedActor = this;
+			ActiveAlertWidget->AddToViewport();
+		}
+	}
 
 	//DrawDebugString(GetWorld(), GetActorLocation(), "PLAYER SPOTTED", nullptr, FColor::White, 4.f, true);
 		

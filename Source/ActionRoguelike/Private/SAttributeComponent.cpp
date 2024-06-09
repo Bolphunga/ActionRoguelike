@@ -11,6 +11,10 @@ USAttributeComponent::USAttributeComponent()
 {
 	HealthMax = 100.0f;
 	Health = 100.0f;
+
+	Rage = 0.0f;
+	RageMax = 100.0f;
+	RageGainRate = 0.3f;
 }
 
 
@@ -48,6 +52,21 @@ float USAttributeComponent::GetHealth() const
 	return Health;
 }
 
+float USAttributeComponent::GetRage() const
+{
+	return Rage;
+}
+
+float USAttributeComponent::GetRageMax() const
+{
+	return RageMax;
+}
+
+float USAttributeComponent::GetRageGainRate() const
+{
+	return RageGainRate;
+}
+
 
 bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delta)
 {
@@ -69,10 +88,24 @@ bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delt
 	if (Delta < 0.0f && Health == 0.0f)
 	{
 		ASGameModeBase* GM = GetWorld()->GetAuthGameMode<ASGameModeBase>();
-		GM->OnActorKilled(GetOwner(), InstigatorActor);
+		if (GM)
+		{
+			GM->OnActorKilled(GetOwner(), InstigatorActor);
+		}
 	}
 
 	return Delta != 0.0f;
+}
+
+bool USAttributeComponent::ObtainRage(float NewHealth, float Delta)
+{
+	if (Delta < 0.0f && Rage < 100.0f && NewHealth > 0.0f)
+	{
+		Rage += -Delta * RageGainRate;
+		Rage = FMath::Clamp(Rage, 0.0f, RageMax);
+		DrawDebugString(GetWorld(), GetOwner()->GetActorLocation(), FString::SanitizeFloat(Rage), nullptr, FColor::White, 1.0f, true);
+	}
+	return true;
 }
 
 USAttributeComponent* USAttributeComponent::GetAttributes(AActor* FromActor)

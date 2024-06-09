@@ -56,6 +56,4 @@ public:
 
 	UFUNCTION(Exec)
 	void KillAll();
-
-	bool KillReward();
 };

@@ -6,13 +6,46 @@
 #include "Components/ActorComponent.h"
 #include "SInteractionComponent.generated.h"
 
+class USWorldUserWidget;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ACTIONROGUELIKE_API USInteractionComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
+protected:
+
+
+	// Reliable - Will always arrive, eventually. Request will be resent unless an aknowlegement is received.
+	// Unreliable - Not guaranteed. Packet can get lost and won't retry.
+	UFUNCTION(Server, Reliable)
+	void ServerInteract(AActor* InFocus);
+
+	void FindBestInteractable();
+
+	UPROPERTY()
+	AActor* FocusedActor;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<USWorldUserWidget> DefaultWidgetClass;
+
+	UPROPERTY()
+	USWorldUserWidget* DefaultWidgetInstance;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Trace")
+	float TraceDistance;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Trace")
+	float TraceRadius;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Trace")
+	TEnumAsByte<ECollisionChannel> CollisionChannel;
+
 public: 
+	
+	USInteractionComponent();
 
 	void PrimaryInteract();		
+
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 };

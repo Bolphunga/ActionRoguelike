@@ -25,7 +25,7 @@ void USBTService_CheckLowHealth::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 
 					UBlackboardComponent* BlackBoardComp = OwnerComp.GetBlackboardComponent();
 					BlackBoardComp->SetValueAsBool(HealthLevelKey.SelectedKeyName, bIsLowHealth);
-					float MinionCurrentHealth =  AttributeComp->Health;
+					float MinionCurrentHealth =  AttributeComp->GetHealth();
 
 					UE_LOG(LogTemp, Log, TEXT("MinionCurrentHealth"));
 				}

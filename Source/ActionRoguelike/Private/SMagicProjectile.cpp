@@ -7,14 +7,12 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "SAttributeComponent.h"
 #include "SGameplayFunctionLibrary.h"
+#include "SActionComponent.h"
+#include "SAction_Effect.h"
 
 
-
-// Sets default values
 ASMagicProjectile::ASMagicProjectile()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
 	//SphereComp->SetCollisionObjectType(ECC_WorldDynamic);
 	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &ASMagicProjectile::OnActorOverlap);
 
@@ -26,17 +24,35 @@ ASMagicProjectile::ASMagicProjectile()
 void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor && OtherActor != GetInstigator())
+	{
+
+		// static FGameplayTag ParryTag = FGameplayTag::RequestGameplayTag("Status.Parrying");
+
+		USActionComponent* ActionComp = Cast<USActionComponent>(OtherActor->GetComponentByClass(USActionComponent::StaticClass()));
+		if (ActionComp && ActionComp->ActiveGameplayTags.HasTag(ParryTag))
 		{
+			MovementComp->Velocity = -MovementComp->Velocity;
+
+			SetInstigator(Cast<APawn>(OtherActor));
+			return;
+		}
+
 		//	USAttributeComponent* AttributeComp = USAttributeComponent::GetAttributes(OtherActor);
 		//	if (AttributeComp)
 		//	{
 		//		AttributeComp->ApplyHealthChange(GetInstigator(), Damage);
-
 		//		Explode();
 		//	}
+
+		// Apply damage impulse
 		if (USGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(), OtherActor, DamageAmount, SweepResult))
 		{
 			Explode();
+
+			if (ActionComp)
+			{
+				ActionComp->AddAction(GetInstigator(), BurningActionClass);
+			}
 		}
 	}
 }

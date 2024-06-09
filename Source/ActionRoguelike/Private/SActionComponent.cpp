@@ -18,7 +18,7 @@ void USActionComponent::BeginPlay()
 
 	for (TSubclassOf<USAction> ActionClass : DefaultActions)
 	{
-		AddAction(ActionClass);
+		AddAction(GetOwner(), ActionClass);
 	}
 }
 
@@ -26,9 +26,12 @@ void USActionComponent::BeginPlay()
 void USActionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	FString DebugMsg = GetNameSafe(GetOwner()) + ": " + ActiveGameplayTags.ToStringSimple();
+	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Green, DebugMsg);
 }
 
-void USActionComponent::AddAction(TSubclassOf<USAction> ActionClass)
+void USActionComponent::AddAction(AActor* Instigator, TSubclassOf<USAction> ActionClass)
 {
 	if (!ensure(ActionClass))
 	{
@@ -39,6 +42,11 @@ void USActionComponent::AddAction(TSubclassOf<USAction> ActionClass)
 	if (ensure(NewAction))
 	{
 		Actions.Add(NewAction);
+
+		if (NewAction->bAutoStart && ensure(NewAction->CanStart(Instigator)))
+		{
+			NewAction->StartAction(Instigator);
+		}
 	}
 }
 
@@ -48,6 +56,13 @@ bool USActionComponent::StartActionByName(AActor* Instigator, FName ActionName)
 	{
 		if (Action && Action->ActionName == ActionName)
 		{
+			if (!Action->CanStart(Instigator))
+			{
+				FString FailMsg = FString::Printf(TEXT("Can't start: %s"), *ActionName.ToString());
+				GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, FailMsg);
+				continue;
+			}
+
 			Action->StartAction(Instigator);
 			return true;
 		}
@@ -62,9 +77,22 @@ bool USActionComponent::StopActionByName(AActor* Instigator, FName ActionName)
 	{
 		if (Action && Action->ActionName == ActionName)
 		{
-			Action->StopAction(Instigator);
-			return true;
+			if (Action->IsRunning())
+			{
+				Action->StopAction(Instigator);
+				return true;
+			}
 		}
 	}
 	return false;
+}
+
+void USActionComponent::RemoveAction(USAction* ActionToRemove)
+{
+	if (!ensure(ActionToRemove && !ActionToRemove->IsRunning()))
+	{
+		return;
+	}
+
+	Actions.Remove(ActionToRemove);
 }

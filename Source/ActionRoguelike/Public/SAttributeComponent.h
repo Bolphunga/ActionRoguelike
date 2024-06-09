@@ -13,6 +13,23 @@ class ACTIONROGUELIKE_API USAttributeComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
+protected:
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
+	float Health;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
+	float HealthMax;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
+	float Rage;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
+	float RageMax;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
+	float RageGainRate;
+
 public:	
 	
 	UFUNCTION(BlueprintCallable, Category = "Attribute")
@@ -23,15 +40,11 @@ public:
 	
 	USAttributeComponent();
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
-	float Health;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
-	float HealthMax;
-
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	bool ApplyHealthChange(AActor* InstigatorActor, float Delta);
-	
+
+	bool ObtainRage(float NewHealth, float Delta);
+
 	UPROPERTY(BlueprintAssignable)
 	FOnHealthChanged OnHealthChanged;
 
@@ -49,6 +62,15 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	float GetHealth() const;
+
+	UFUNCTION(BlueprintCallable)
+	float GetRage() const;
+
+	UFUNCTION(BlueprintCallable)
+	float GetRageMax() const;
+
+	UFUNCTION(BlueprintCallable)
+	float GetRageGainRate() const;
 
 	UFUNCTION(BlueprintCallable)
 	bool Kill(AActor* InstigatorActor);

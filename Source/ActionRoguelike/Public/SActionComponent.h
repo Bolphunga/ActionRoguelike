@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "GameplayTagContainer.h"
 #include "SActionComponent.generated.h"
 
 class USAction;
@@ -16,8 +17,11 @@ class ACTIONROGUELIKE_API USActionComponent : public UActorComponent
 
 public:	
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tags")
+	FGameplayTagContainer ActiveGameplayTags;
+
 	UFUNCTION(BlueprintCallable, Category = "Actions")
-	void AddAction(TSubclassOf<USAction> ActionClass);
+	void AddAction(AActor* Instigator, TSubclassOf<USAction> ActionClass);
 
 	UFUNCTION(BlueprintCallable, Category = "Actions")
 	bool StartActionByName(AActor* Instigator, FName ActionName);
@@ -25,9 +29,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Actions")
 	bool StopActionByName(AActor* Instigator, FName ActionName);
 
+	UFUNCTION(BlueprintCallable, Category = "Actions")
+	void RemoveAction(USAction* ActionToRemove);
+
 	USActionComponent();
 
 protected:
+
 
 	UPROPERTY(EditAnywhere, Category = "Actions")
 	TArray<TSubclassOf<USAction>> DefaultActions;

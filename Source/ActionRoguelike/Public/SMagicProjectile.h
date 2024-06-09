@@ -5,7 +5,11 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "SProjectileBase.h"
+#include "GameplayTagContainer.h"
 #include "SMagicProjectile.generated.h"
+
+
+class USAction_Effect;
 
 UCLASS()
 class ACTIONROGUELIKE_API ASMagicProjectile : public ASProjectileBase
@@ -22,7 +26,12 @@ protected:
 	UFUNCTION()
 	void OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Attack")
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 	float DamageAmount;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	FGameplayTag ParryTag;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	TSubclassOf<USAction_Effect> BurningActionClass;
 };

@@ -118,6 +118,8 @@ void ASGameModeBase::RespawnTimerElapsed(AController* Controller)
 
 void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
 {
+
+	// Respawn player after delay.
 	ASCharacter* Player = Cast<ASCharacter>(VictimActor);
 	if (Player)
 	{
@@ -126,20 +128,19 @@ void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
 		FTimerDelegate Delegate;
 		Delegate.BindUFunction(this, "RespawnTimerElapsed", Player->GetController());
 		
-		float RespawnDelay = 2.0f;
+		float RespawnDelay = 1.0f;
 		GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, Delegate, RespawnDelay, false);
 	}
 	UE_LOG(LogTemp, Log, TEXT("OnActorKilled: Victim: %s, Killer: %s"), *GetNameSafe(VictimActor), *GetNameSafe(Killer));
-}
 
-bool ASGameModeBase::KillReward()
-{
-	ASPlayerState* PS = Cast<ASPlayerState>(GetOwner()->GetInstigatorController()->GetPlayerState<APlayerState>());
-	if (PS)
+	// Give credit after kill.
+	APawn* KillerPawn = Cast<APawn>(Killer);
+	if (KillerPawn)
 	{
-		PS->ApplyCreditChange(CreditsAdded);
-
-		UE_LOG(LogTemp, Log, TEXT("Credits Added: %f"), PS->Credits);
+		ASPlayerState* PS = KillerPawn->GetPlayerState<ASPlayerState>();
+		if (PS)
+		{
+			PS->ApplyCreditChange(CreditsAdded);
+		}
 	}
-	return true;
 }

@@ -6,7 +6,7 @@
 #include "GameFramework/PlayerState.h"
 #include "SPlayerState.generated.h"
 
-//DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnCreditChanged, AActor*, InstigatorActor, ASPlayerState*, OwningComp, float, NewCredits, float, Delta);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnCreditsChanged, ASPlayerState*, PlayerState, int32, NewCredits, int32, Delta);
 
 UCLASS()
 class ACTIONROGUELIKE_API ASPlayerState : public APlayerState
@@ -15,24 +15,21 @@ class ACTIONROGUELIKE_API ASPlayerState : public APlayerState
 	
 public:
 
-	ASPlayerState();
+	UFUNCTION(BlueprintCallable, Category = "Credits")
+	int32 GetCredits() const;
 
-	//UPROPERTY(BlueprintAssignable)
-	//FOnCreditChanged OnCreditChanged;
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnCreditsChanged OnCreditChanged;
 
-	bool ApplyCreditChange(float Delta);
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Consumable")
-	float Credits;
+	bool ApplyCreditChange(int32 Delta);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Consumable")
-	float CreditMax;
+	int32 CreditMax;
 
 protected:
 
-	virtual void PostInitializeComponents() override;
+	ASPlayerState();
 
-
-	//UFUNCTION()
-	//void OnCreditChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Consumable")
+	int32 Credits;
 };

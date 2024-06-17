@@ -6,7 +6,10 @@
 #include "Components/ActorComponent.h"
 #include "SAttributeComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnHealthChanged, AActor*, InstigatorActor, USAttributeComponent*, OwningComp, float, NewHealth, float, Delta);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnHealthChanged, AActor*, InstigatorActor, USAttributeComponent*, OwningComp, float, NewHealth, float, Delta);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnRageChanged, AActor*, InstigatorActor, USAttributeComponent*, OwningComp, float, NewRage, float, Delta);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnAttributeChanged, AActor*, InstigatorActor, USAttributeComponent*, OwningComp, float, NewValue, float, Delta);
+
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ACTIONROGUELIKE_API USAttributeComponent : public UActorComponent
@@ -15,20 +18,26 @@ class ACTIONROGUELIKE_API USAttributeComponent : public UActorComponent
 
 protected:
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated, Category = "Attributes")
 	float Health;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated, Category = "Attributes")
 	float HealthMax;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated, Category = "Attributes")
 	float Rage;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated, Category = "Attributes")
 	float RageMax;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated, Category = "Attributes")
 	float RageGainRate;
+
+	UFUNCTION(NetMulticast, Reliable) //@Fixme: Mark as Unreliable once we move the 'state' of our SCharacter.
+	void MulticastHealthChanged(AActor* InstigatorActor, float NewHealth, float Delta);
+
+	UFUNCTION(NetMulticast, Reliable) //@Fixme: Mark as Unreliable once we move the 'state' of our SCharacter.
+	void MulticastRageChanged(AActor* InstigatorActor, float NewRage, float Delta);
 
 public:	
 	
@@ -43,10 +52,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	bool ApplyHealthChange(AActor* InstigatorActor, float Delta);
 
-	bool ObtainRage(float NewHealth, float Delta);
+	bool ApplyRageChange(AActor* InstigatorActor, float Delta);
 
-	UPROPERTY(BlueprintAssignable)
-	FOnHealthChanged OnHealthChanged;
+	UPROPERTY(BlueprintAssignable, Category = "Attributes")
+	FOnAttributeChanged OnHealthChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Attributes")
+	FOnAttributeChanged OnRageChanged;
 
 	UFUNCTION(BlueprintCallable)
 	bool IsAlive() const;
@@ -57,21 +69,21 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	bool IsLowHealth();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	float GetHealthMax() const;
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	float GetHealth() const;
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	float GetRage() const;
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	float GetRageMax() const;
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	float GetRageGainRate() const;
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	bool Kill(AActor* InstigatorActor);
 };

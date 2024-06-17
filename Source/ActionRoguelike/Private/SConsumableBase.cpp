@@ -2,6 +2,8 @@
 
 
 #include "SConsumableBase.h"
+#include "Net/UnrealNetwork.h"
+
 
 // Sets default values
 ASConsumableBase::ASConsumableBase()
@@ -12,7 +14,9 @@ ASConsumableBase::ASConsumableBase()
 
 	ItemCooldown = 10.0f;
 
-	bOnCooldown = false;
+	bIsVisible = true;
+
+	bReplicates = true;
 }
 
 void ASConsumableBase::Interact_Implementation(APawn* InstigatorPawn)
@@ -20,16 +24,43 @@ void ASConsumableBase::Interact_Implementation(APawn* InstigatorPawn)
 	// Shared logic here
 }
 
+//void ASConsumableBase::HideConsumable()
+//{
+//	ServerHideConsumable();
+//}
+
 void ASConsumableBase::HideConsumable()
 {
-	FTimerHandle TimerHandle_ItemVisible;
-	GetWorldTimerManager().SetTimer(TimerHandle_ItemVisible, this, &ASConsumableBase::ShowConsumable, ItemCooldown);
-	RootComponent->SetVisibility(false);
-	bOnCooldown = true;
+	OnRep_IsVisible();
 }
 
 void ASConsumableBase::ShowConsumable()
 {
-	RootComponent->SetVisibility(true);
-	bOnCooldown = false;
+	bIsVisible = true;
+	RootComponent->SetVisibility(bIsVisible);
+}
+
+void ASConsumableBase::OnRep_IsVisible()
+{
+	if (bIsVisible)
+	{
+		FTimerHandle TimerHandle_ItemVisible;
+		GetWorldTimerManager().SetTimer(TimerHandle_ItemVisible, this, &ASConsumableBase::ShowConsumable, ItemCooldown);
+		
+		bIsVisible = false;
+		RootComponent->SetVisibility(bIsVisible);
+	}
+}
+
+
+bool ASConsumableBase::IsVisible() const
+{
+	return bIsVisible;
+}
+
+void ASConsumableBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ASConsumableBase, bIsVisible);
 }

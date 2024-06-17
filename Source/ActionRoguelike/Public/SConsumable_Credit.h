@@ -14,14 +14,23 @@ class ACTIONROGUELIKE_API ASConsumable_Credit : public ASConsumableBase
 {
 	GENERATED_BODY()
 	
-	public:	
+public:	
 
-		ASConsumable_Credit();
+	ASConsumable_Credit();
 
 	void Interact_Implementation(APawn* InstigatorPawn);
 
+	//virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 protected:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Consumables")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated, Category = "Consumables")
 	float CreditsAdded;
+
+	//UPROPERTY(ReplicatedUsing = "OnRep_bIsHidden", BlueprintReadOnly)
+	bool bIsHidden;
+
+	//UFUNCTION()
+	//void OnRep_bIsHidden();
+
 };

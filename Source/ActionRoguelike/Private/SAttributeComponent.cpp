@@ -3,6 +3,7 @@
 
 #include "SAttributeComponent.h"
 #include "SGameModeBase.h"
+#include "Net/UnrealNetwork.h"
 
 
 static TAutoConsoleVariable<float> CVarDamageMultiplier(TEXT("su.DamageMultiplier"), 1.f, TEXT("Global damage multiplier for Attribute Component."), ECVF_Cheat);
@@ -15,6 +16,8 @@ USAttributeComponent::USAttributeComponent()
 	Rage = 0.0f;
 	RageMax = 100.0f;
 	RageGainRate = 0.3f;
+
+	SetIsReplicatedByDefault(true);
 }
 
 
@@ -83,7 +86,12 @@ bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delt
 	Health += Delta;
 	Health = FMath::Clamp(Health, 0.0f, HealthMax);
 
-	OnHealthChanged.Broadcast(InstigatorActor, this, Health, Delta);
+	//OnHealthChanged.Broadcast(InstigatorActor, this, Health, Delta);
+	if (Delta != 0.0f)
+	{
+		MulticastHealthChanged(InstigatorActor, Health, Delta);
+	}
+
 
 	if (Delta < 0.0f && Health == 0.0f)
 	{
@@ -97,16 +105,23 @@ bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delt
 	return Delta != 0.0f;
 }
 
-bool USAttributeComponent::ObtainRage(float NewHealth, float Delta)
+bool USAttributeComponent::ApplyRageChange(AActor* InstigatorActor, float Delta)
 {
-	if (Delta < 0.0f && Rage < 100.0f && NewHealth > 0.0f)
+	const float OldRage = Rage;
+
+	float RageGain = Delta * RageGainRate;
+	Rage = FMath::Clamp(Rage + RageGain, 0.0f, RageMax);
+
+	float ActualDelta = Rage - OldRage;
+	if (ActualDelta != 0.0f)
 	{
-		Rage += -Delta * RageGainRate;
-		Rage = FMath::Clamp(Rage, 0.0f, RageMax);
-		DrawDebugString(GetWorld(), GetOwner()->GetActorLocation(), FString::SanitizeFloat(Rage), nullptr, FColor::White, 1.0f, true);
+		MulticastRageChanged(InstigatorActor, Rage, ActualDelta);
 	}
-	return true;
+
+	return ActualDelta != 0;
 }
+
+
 
 USAttributeComponent* USAttributeComponent::GetAttributes(AActor* FromActor)
 {
@@ -127,6 +142,29 @@ bool USAttributeComponent::IsActorAlive(AActor* Actor)
 	return false;
 }
 
+void USAttributeComponent::MulticastHealthChanged_Implementation(AActor* InstigatorActor, float NewHealth, float Delta)
+{
+	OnHealthChanged.Broadcast(InstigatorActor, this, NewHealth, Delta);
 
 
+}
+
+void USAttributeComponent::MulticastRageChanged_Implementation(AActor* InstigatorActor, float NewRage, float Delta)
+{
+	OnRageChanged.Broadcast(InstigatorActor, this, NewRage, Delta);
+}
+
+void USAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(USAttributeComponent, Health);
+	DOREPLIFETIME(USAttributeComponent, HealthMax);
+
+	DOREPLIFETIME(USAttributeComponent, Rage);
+	DOREPLIFETIME(USAttributeComponent, RageMax);
+	DOREPLIFETIME(USAttributeComponent, RageGainRate);
+
+	//DOREPLIFETIME_CONDITION(USAttributeComponent, HealthMax, COND_InitialOnly);
+}
 

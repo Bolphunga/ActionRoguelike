@@ -31,7 +31,7 @@ protected:
 	TSubclassOf<UUserWidget> HealthBarWidgetClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
-	TSubclassOf<UUserWidget> PlayerSpottedWidgetClass;
+	TSubclassOf<UUserWidget> SpottedWidgetClass;
 
 	UPROPERTY(VisibleAnywhere, Category = "Effects")
 	FName TimeToHitParamName;
@@ -52,8 +52,16 @@ protected:
 	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);
 
+	//UFUNCTION(NetMulticast, Reliable) //@Fixme: Mark as Unreliable once we move the 'state' of our SAICharacter.
+	//void MulticastPawnSeen(APawn* Pawn);
+
 	void PostInitializeComponents() override;
 
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
+
+	UFUNCTION()
+	AActor* GetTargetActor() const;
+
+	FName TargetActorKey;
 };

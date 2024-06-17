@@ -101,7 +101,7 @@ void USInteractionComponent::FindBestInteractable()
 	{
 		if (DefaultWidgetInstance)
 		{
-			DefaultWidgetInstance->RemoveFromViewport();
+			DefaultWidgetInstance->RemoveFromParent();
 		}
 	}
 

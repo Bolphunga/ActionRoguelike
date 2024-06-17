@@ -9,7 +9,7 @@
 #include "SMagicProjectile.generated.h"
 
 
-class USAction_Effect;
+class USActionEffect;
 
 UCLASS()
 class ACTIONROGUELIKE_API ASMagicProjectile : public ASProjectileBase
@@ -33,5 +33,5 @@ protected:
 	FGameplayTag ParryTag;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
-	TSubclassOf<USAction_Effect> BurningActionClass;
+	TSubclassOf<USActionEffect> BurningActionClass;
 };

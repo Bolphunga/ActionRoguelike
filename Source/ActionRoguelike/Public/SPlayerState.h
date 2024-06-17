@@ -23,13 +23,18 @@ public:
 
 	bool ApplyCreditChange(int32 Delta);
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Consumable")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated, Category = "Consumable")
 	int32 CreditMax;
+
+	//virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
 
 	ASPlayerState();
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Consumable")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated, Category = "Consumable")
 	int32 Credits;
+
+	UFUNCTION(NetMulticast, Reliable) //@Fixme: Mark as Unreliable once we move the 'state' of our SCharacter.
+	void MulticastCreditChanged(ASPlayerState* PlayerState, float NewCredits, float Delta);
 };

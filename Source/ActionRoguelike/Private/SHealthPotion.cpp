@@ -6,6 +6,7 @@
 #include "SAttributeComponent.h"
 #include "SInteractionComponent.h"
 #include "SPlayerState.h"
+#include "Net/UnrealNetwork.h"
 
 
 
@@ -23,8 +24,7 @@ void ASHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 		return;
 	}
 
-	if (!bOnCooldown)
-
+	if (bIsVisible)
 	{ 
 		ASPlayerState* PS = InstigatorPawn->GetPlayerState<ASPlayerState>();
 		if (PS && PS->GetCredits() >= -HealthCost)
@@ -39,4 +39,12 @@ void ASHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 				PS->ApplyCreditChange(HealthCost);
 		}
 	}
+}
+
+void ASHealthPotion::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ASHealthPotion, HealAmount);
+	DOREPLIFETIME(ASHealthPotion, HealthCost);
 }

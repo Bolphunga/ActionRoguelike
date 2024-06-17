@@ -22,8 +22,6 @@ public:
 
 	void Interact_Implementation(APawn* InstigatorPawn);
 
-	bool bOnCooldown;
-
 	UPROPERTY(EditAnywhere, Category = "Consumables")
 	float ItemCooldown;
 
@@ -31,8 +29,23 @@ public:
 
 	void HideConsumable();
 
+	//UFUNCTION(Server, Reliable)
+	//void ServerShowConsumable();
+
+	//UFUNCTION(Server, Reliable)
+	//void ServerHideConsumable();
+
+	UFUNCTION(BlueprintCallable)
+	bool IsVisible() const;
+
 protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Consumables")
 	UStaticMeshComponent* MeshComp;
+
+	UPROPERTY(ReplicatedUsing = "OnRep_IsVisible", BlueprintReadOnly)
+	bool bIsVisible;
+
+	UFUNCTION()
+	void OnRep_IsVisible();
 };

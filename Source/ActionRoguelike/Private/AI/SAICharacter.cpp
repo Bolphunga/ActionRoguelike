@@ -5,12 +5,12 @@
 #include "Perception/PawnSensingComponent.h"
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "DrawDebugHelpers.h"
 #include "SAttributeComponent.h"
 #include "BrainComponent.h"
 #include "SWorldUserWidget.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "SPlayerState.h"
 #include "SActionComponent.h"
 
 
@@ -94,23 +94,45 @@ void ASAICharacter::SetTargetActor(AActor* NewTarget)
 	}
 }
 
+AActor* ASAICharacter::GetTargetActor() const
+{
+	AAIController* AIC = Cast<AAIController>(GetController());
+	if (AIC)
+	{
+		return Cast<AActor>(AIC->GetBlackboardComponent()->GetValueAsObject(TargetActorKey));
+	}
+	return nullptr;
+}
+
 void ASAICharacter::OnPawnSeen(APawn* Pawn)
 {
-	SetTargetActor(Pawn);
-	
-	if (ActiveAlertWidget == nullptr)
+	// Ignore if target is already set.
+	if (GetTargetActor() != Pawn)
 	{
-		ActiveAlertWidget = CreateWidget< USWorldUserWidget>(GetWorld(), PlayerSpottedWidgetClass);
-		if (ActiveAlertWidget)
+		SetTargetActor(Pawn);
+
+		if (ActiveAlertWidget == nullptr)
 		{
-			ActiveAlertWidget->AttachedActor = this;
-			ActiveAlertWidget->AddToViewport();
+			ActiveAlertWidget = CreateWidget< USWorldUserWidget>(GetWorld(), SpottedWidgetClass);
+			if (ActiveAlertWidget)
+			{
+				ActiveAlertWidget->AttachedActor = this;
+				ActiveAlertWidget->AddToViewport();
+
+				//APawn* AttachedPawn = Cast<APawn>(ActiveAlertWidget->AttachedActor);
+				//MulticastPawnSeen(AttachedPawn);
+			}
 		}
 	}
-
-	//DrawDebugString(GetWorld(), GetActorLocation(), "PLAYER SPOTTED", nullptr, FColor::White, 4.f, true);
-		
+	//DrawDebugString(GetWorld(), GetActorLocation(), "PLAYER SPOTTED", nullptr, FColor::White, 4.f, true);	
 }
+
+//void ASAICharacter::MulticastPawnSeen(APawn* Pawn)
+//{
+//	PawnSensingComp->OnSeePawn.Broadcast(Pawn);
+//}
+
+
 
 
 

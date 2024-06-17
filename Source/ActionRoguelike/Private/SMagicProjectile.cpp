@@ -8,7 +8,7 @@
 #include "SAttributeComponent.h"
 #include "SGameplayFunctionLibrary.h"
 #include "SActionComponent.h"
-#include "SAction_Effect.h"
+#include "SActionEffect.h"
 
 
 ASMagicProjectile::ASMagicProjectile()

@@ -1,18 +1,18 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "SAction_Effect.h"
+#include "SActionEffect.h"
 #include "SActionComponent.h"
 
 
 
 
-USAction_Effect::USAction_Effect()
+USActionEffect::USActionEffect()
 {
 	bAutoStart = true;
 }
 
-void USAction_Effect::StartAction_Implementation(AActor* Instigator)
+void USActionEffect::StartAction_Implementation(AActor* Instigator)
 {
 	Super::StartAction_Implementation(Instigator);
 
@@ -33,7 +33,7 @@ void USAction_Effect::StartAction_Implementation(AActor* Instigator)
 	}
 }
 
-void USAction_Effect::StopAction_Implementation(AActor* Instigator)
+void USActionEffect::StopAction_Implementation(AActor* Instigator)
 {
 	if (GetWorld()->GetTimerManager().GetTimerRemaining(PeriodHandle) < KINDA_SMALL_NUMBER)
 	{
@@ -52,6 +52,6 @@ void USAction_Effect::StopAction_Implementation(AActor* Instigator)
 	}
 }
 
-void USAction_Effect::ExecutePeriodEffect_Implementation(AActor* Instigator)
+void USActionEffect::ExecutePeriodEffect_Implementation(AActor* Instigator)
 {
 }

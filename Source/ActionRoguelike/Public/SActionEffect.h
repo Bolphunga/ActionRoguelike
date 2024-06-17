@@ -4,19 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "SAction.h"
-#include "SAction_Effect.generated.h"
+#include "SActionEffect.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ACTIONROGUELIKE_API USAction_Effect : public USAction
+class ACTIONROGUELIKE_API USActionEffect : public USAction
 {
 	GENERATED_BODY()
 	
 public:
 
-	USAction_Effect();
+	USActionEffect();
 
 	void StartAction_Implementation(AActor* Instigator) override;
 

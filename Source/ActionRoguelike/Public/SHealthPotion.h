@@ -21,11 +21,13 @@ public:
 
 	void Interact_Implementation(APawn* InstigatorPawn);
 
+	//virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 protected:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Consumables")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated, Category = "Consumables")
 	float HealAmount;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Consumables")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated, Category = "Consumables")
 	float HealthCost;
 };

@@ -50,6 +50,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Effects")
 	UParticleSystem* MuzzleFlash;
 
+	UPROPERTY(VisibleAnywhere, Category = "Effects")
+	int32 HitFlash_CustomPrimitiveIndex;
+
 
 	void MoveForward(float value);
 
@@ -73,7 +76,7 @@ protected:
 	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
 
 	UFUNCTION()
-	void OnCreditChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
+	void OnCreditChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewCredit, float Delta);
 
 	virtual void PostInitializeComponents() override;
 

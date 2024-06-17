@@ -3,6 +3,7 @@
 
 #include "SConsumable_Credit.h"
 #include "SPlayerState.h"
+#include "Net/UnrealNetwork.h"
 
 
 
@@ -21,7 +22,7 @@ void ASConsumable_Credit::Interact_Implementation(APawn* InstigatorPawn)
 			return;
 		}
 
-		if (!bOnCooldown)
+		if (bIsVisible)
 
 		{
 			ASPlayerState* PS = Cast<ASPlayerState>(InstigatorPawn->GetPlayerState<APlayerState>());
@@ -34,3 +35,11 @@ void ASConsumable_Credit::Interact_Implementation(APawn* InstigatorPawn)
 			}
 		}
 }
+
+void ASConsumable_Credit::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ASConsumable_Credit, CreditsAdded);
+}
+

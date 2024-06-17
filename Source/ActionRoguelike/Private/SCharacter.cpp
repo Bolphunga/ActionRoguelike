@@ -142,35 +142,29 @@ void ASCharacter::PrimaryInteract()
 
 void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta)
 {
+	// Damaged
 	if (Delta < 0.0f)
 	{
-		GetMesh()->SetScalarParameterValueOnMaterials(TimeToHitParamName, GetWorld()->TimeSeconds);
+		//GetMesh()->SetScalarParameterValueOnMaterials(TimeToHitParamName, GetWorld()->TimeSeconds);
 
+		// Replaces the above "old" method of requiring unique material instances for every mesh element on the player 
+		GetMesh()->SetCustomPrimitiveDataFloat(HitFlash_CustomPrimitiveIndex, GetWorld()->TimeSeconds);
 
+		const float RageDelta = FMath::Abs(Delta);
+		AttributeComp->ApplyRageChange(InstigatorActor, RageDelta);
 
+		UE_LOG(LogTemp, Log, TEXT("Rage: %f"), AttributeComp->GetRage());
 	}
-		// Calculate and apply Rage gain
-		//float Rage = AttributeComp->GetRage();
-		//float RageGain = AttributeComp->GetRageGainRate() * -Delta;
-
-		//if (Rage < 100.0f && NewHealth > 0.0f)
-		//{
-		//	Rage += RageGain;
-		//	Rage = FMath::Clamp(Rage, 0.0f, AttributeComp->GetRageMax());
-
-		//	UE_LOG(LogTemp, Log, TEXT("Rage: %f"), Rage);
-		//}
-	AttributeComp->ObtainRage(NewHealth, Delta);
-
+	// Dead
 	if (NewHealth <= 0.0f && Delta < 0.0f)
 	{
 		APlayerController* PC = Cast<APlayerController>(GetController());
 		DisableInput(PC);
 	}
-
 }
 
-void ASCharacter::OnCreditChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta)
+
+void ASCharacter::OnCreditChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewCredit, float Delta)
 {
 
 }

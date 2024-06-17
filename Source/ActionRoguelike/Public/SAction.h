@@ -17,6 +17,9 @@ class ACTIONROGUELIKE_API USAction : public UObject
 	
 public:
 
+	UFUNCTION()
+	void Initialize(USActionComponent* NewActionComp);
+
 	UPROPERTY(EditDefaultsOnly, Category = "Action")
 	bool bAutoStart;
 
@@ -37,7 +40,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Action")
 	bool IsRunning() const;
 
+	bool IsSupportedForNetworking() const override
+	{
+		return true;
+	}
+
 protected:
+
+	UPROPERTY(Replicated) 
+	USActionComponent* ActionComp;
 
 	UFUNCTION(BlueprintCallable, Category = "Action")
 	USActionComponent* GetOwningComponent() const;
@@ -48,5 +59,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Tags")
 	FGameplayTagContainer BlockedTags;
 
+	UPROPERTY(ReplicatedUsing = OnRep_IsRunning)
 	bool bIsRunning;
+
+	UFUNCTION()
+	void OnRep_IsRunning();
 };

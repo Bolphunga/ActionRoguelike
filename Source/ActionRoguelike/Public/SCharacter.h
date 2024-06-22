@@ -75,9 +75,6 @@ protected:
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
 
-	UFUNCTION()
-	void OnCreditChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewCredit, float Delta);
-
 	virtual void PostInitializeComponents() override;
 
 	virtual FVector GetPawnViewLocation() const override;

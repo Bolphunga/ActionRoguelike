@@ -4,6 +4,7 @@
 #include "SPlayerState.h"
 #include "SAttributeComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "SSaveGame.h"
 
 
 
@@ -15,15 +16,14 @@ ASPlayerState::ASPlayerState()
 	bReplicates = true;
 }
 
-
 bool ASPlayerState::ApplyCreditChange(int32 Delta)
 {
-	Credits += Delta;
-	Credits = FMath::Clamp(Credits, 0.0f, CreditMax);
+	Credits = FMath::Clamp(Credits + Delta, 0.0f, CreditMax);
 	MulticastCreditChanged(this, Credits, Delta);
 	
 	return Delta != 0.0f;
 }
+
 
 void ASPlayerState::MulticastCreditChanged_Implementation(ASPlayerState* PlayerState, float NewCredits, float Delta)
 {
@@ -41,4 +41,20 @@ void ASPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 
 	DOREPLIFETIME(ASPlayerState, Credits);
 	DOREPLIFETIME(ASPlayerState, CreditMax);
+}
+
+void ASPlayerState::SavePlayerState_Implementation(USSaveGame* SaveObject)
+{
+	if (SaveObject)
+	{
+		SaveObject->Credits = Credits;
+	}
+}
+
+void ASPlayerState::LoadPlayerState_Implementation(USSaveGame* SaveObject)
+{
+	if (SaveObject)
+	{
+		Credits = SaveObject->Credits;
+	}
 }

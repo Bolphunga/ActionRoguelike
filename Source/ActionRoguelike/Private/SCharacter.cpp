@@ -160,11 +160,7 @@ void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent*
 	{
 		APlayerController* PC = Cast<APlayerController>(GetController());
 		DisableInput(PC);
+
+		SetLifeSpan(5.0f);
 	}
-}
-
-
-void ASCharacter::OnCreditChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewCredit, float Delta)
-{
-
 }

@@ -28,8 +28,6 @@ bool USAttributeComponent::IsAlive() const
 	UE_LOG(LogTemp, Log, TEXT("Health Changed: %s"), *FString::SanitizeFloat(Health));
 }
 
-
-
 bool USAttributeComponent::IsFullHealth() const
 {
 	return Health == HealthMax;
@@ -45,31 +43,6 @@ bool USAttributeComponent::Kill(AActor* InstigatorActor)
 	return ApplyHealthChange(InstigatorActor, -GetHealthMax());
 }
 
-float USAttributeComponent::GetHealthMax() const
-{
-	return HealthMax ;
-}
-
-float USAttributeComponent::GetHealth() const
-{
-	return Health;
-}
-
-float USAttributeComponent::GetRage() const
-{
-	return Rage;
-}
-
-float USAttributeComponent::GetRageMax() const
-{
-	return RageMax;
-}
-
-float USAttributeComponent::GetRageGainRate() const
-{
-	return RageGainRate;
-}
-
 
 bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delta)
 {
@@ -83,26 +56,31 @@ bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delt
 		Delta *= DamageMultiplier;
 	}
 
-	Health += Delta;
-	Health = FMath::Clamp(Health, 0.0f, HealthMax);
+	float NewHealth = FMath::Clamp(Health + Delta, 0.0f, HealthMax);
+	float ActualDelta = NewHealth - Health;
 
-	//OnHealthChanged.Broadcast(InstigatorActor, this, Health, Delta);
-	if (Delta != 0.0f)
+	// Is server?
+	if (GetOwner()->HasAuthority())
 	{
-		MulticastHealthChanged(InstigatorActor, Health, Delta);
-	}
-
-
-	if (Delta < 0.0f && Health == 0.0f)
-	{
-		ASGameModeBase* GM = GetWorld()->GetAuthGameMode<ASGameModeBase>();
-		if (GM)
+		Health = NewHealth;
+		
+		if (ActualDelta != 0.0f)
 		{
-			GM->OnActorKilled(GetOwner(), InstigatorActor);
+		MulticastHealthChanged(InstigatorActor, Health, ActualDelta);
+		}
+
+		// Died
+		if (ActualDelta < 0.0f && Health == 0.0f)
+		{
+			ASGameModeBase* GM = GetWorld()->GetAuthGameMode<ASGameModeBase>();
+			if (GM)
+			{
+				GM->OnActorKilled(GetOwner(), InstigatorActor);
+			}
 		}
 	}
-
-	return Delta != 0.0f;
+	//OnHealthChanged.Broadcast(InstigatorActor, this, Health, Delta);
+	return ActualDelta != 0.0f;
 }
 
 bool USAttributeComponent::ApplyRageChange(AActor* InstigatorActor, float Delta)
@@ -120,7 +98,6 @@ bool USAttributeComponent::ApplyRageChange(AActor* InstigatorActor, float Delta)
 
 	return ActualDelta != 0;
 }
-
 
 
 USAttributeComponent* USAttributeComponent::GetAttributes(AActor* FromActor)
@@ -154,6 +131,32 @@ void USAttributeComponent::MulticastRageChanged_Implementation(AActor* Instigato
 	OnRageChanged.Broadcast(InstigatorActor, this, NewRage, Delta);
 }
 
+
+float USAttributeComponent::GetHealthMax() const
+{
+	return HealthMax ;
+}
+
+float USAttributeComponent::GetHealth() const
+{
+	return Health;
+}
+
+float USAttributeComponent::GetRage() const
+{
+	return Rage;
+}
+
+float USAttributeComponent::GetRageMax() const
+{
+	return RageMax;
+}
+
+float USAttributeComponent::GetRageGainRate() const
+{
+	return RageGainRate;
+}
+
 void USAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -167,4 +170,3 @@ void USAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 
 	//DOREPLIFETIME_CONDITION(USAttributeComponent, HealthMax, COND_InitialOnly);
 }
-

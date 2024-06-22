@@ -8,6 +8,8 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnCreditsChanged, ASPlayerState*, PlayerState, int32, NewCredits, int32, Delta);
 
+class USSaveGame;
+
 UCLASS()
 class ACTIONROGUELIKE_API ASPlayerState : public APlayerState
 {
@@ -26,7 +28,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated, Category = "Consumable")
 	int32 CreditMax;
 
-	//virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	UFUNCTION(BlueprintNativeEvent)
+	void SavePlayerState(USSaveGame* SaveObject);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void LoadPlayerState(USSaveGame* SaveObject);
 
 protected:
 

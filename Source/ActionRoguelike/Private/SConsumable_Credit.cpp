@@ -31,7 +31,7 @@ void ASConsumable_Credit::Interact_Implementation(APawn* InstigatorPawn)
 				PS->ApplyCreditChange(CreditsAdded);
 				HideConsumable();
 
-				UE_LOG(LogTemp, Log, TEXT("Credits Added: %f"), PS->GetCredits());
+				//UE_LOG(LogTemp, Log, TEXT("Credits Added: %f"), PS->GetCredits());
 			}
 		}
 }

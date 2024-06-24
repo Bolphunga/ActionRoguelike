@@ -10,10 +10,10 @@ ASConsumableBase::ASConsumableBase()
 {
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>("MeshComp");
 	MeshComp->SetCollisionProfileName("Consumable");
+	MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	RootComponent = MeshComp;
 
 	ItemCooldown = 10.0f;
-
 	bIsVisible = true;
 
 	bReplicates = true;
@@ -24,32 +24,24 @@ void ASConsumableBase::Interact_Implementation(APawn* InstigatorPawn)
 	// Shared logic here
 }
 
-//void ASConsumableBase::HideConsumable()
-//{
-//	ServerHideConsumable();
-//}
-
 void ASConsumableBase::HideConsumable()
 {
+	bIsVisible = false;
 	OnRep_IsVisible();
+
+	GetWorldTimerManager().SetTimer(TimerHandle_ItemVisible, this, &ASConsumableBase::ShowConsumable, ItemCooldown);
 }
 
 void ASConsumableBase::ShowConsumable()
 {
 	bIsVisible = true;
-	RootComponent->SetVisibility(bIsVisible);
+	OnRep_IsVisible();
 }
 
 void ASConsumableBase::OnRep_IsVisible()
 {
-	if (bIsVisible)
-	{
-		FTimerHandle TimerHandle_ItemVisible;
-		GetWorldTimerManager().SetTimer(TimerHandle_ItemVisible, this, &ASConsumableBase::ShowConsumable, ItemCooldown);
-		
-		bIsVisible = false;
-		RootComponent->SetVisibility(bIsVisible);
-	}
+	RootComponent->SetVisibility(bIsVisible, true);
+	SetActorEnableCollision(bIsVisible);
 }
 
 

@@ -111,26 +111,21 @@ void ASAICharacter::OnPawnSeen(APawn* Pawn)
 	{
 		SetTargetActor(Pawn);
 
-		if (ActiveAlertWidget == nullptr)
-		{
-			ActiveAlertWidget = CreateWidget< USWorldUserWidget>(GetWorld(), SpottedWidgetClass);
-			if (ActiveAlertWidget)
-			{
-				ActiveAlertWidget->AttachedActor = this;
-				ActiveAlertWidget->AddToViewport();
-
-				//APawn* AttachedPawn = Cast<APawn>(ActiveAlertWidget->AttachedActor);
-				//MulticastPawnSeen(AttachedPawn);
-			}
-		}
+		MulticastPawnSeen();
 	}
 	//DrawDebugString(GetWorld(), GetActorLocation(), "PLAYER SPOTTED", nullptr, FColor::White, 4.f, true);	
 }
 
-//void ASAICharacter::MulticastPawnSeen(APawn* Pawn)
-//{
-//	PawnSensingComp->OnSeePawn.Broadcast(Pawn);
-//}
+void ASAICharacter::MulticastPawnSeen_Implementation()
+{
+	USWorldUserWidget* NewWidget = CreateWidget< USWorldUserWidget>(GetWorld(), SpottedWidgetClass);
+	if (NewWidget)
+	{
+		NewWidget->AttachedActor = this;
+		// Index of 10 or higher places it on top of all other widgets.
+		NewWidget->AddToViewport(10);
+	}
+}
 
 
 

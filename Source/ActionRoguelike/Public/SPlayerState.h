@@ -38,9 +38,13 @@ protected:
 
 	ASPlayerState();
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated, Category = "Consumable")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, ReplicatedUsing = "OnRep_Credits", Category = "Consumable")
 	int32 Credits;
 
-	UFUNCTION(NetMulticast, Reliable) //@Fixme: Mark as Unreliable once we move the 'state' of our SCharacter.
-	void MulticastCreditChanged(ASPlayerState* PlayerState, float NewCredits, float Delta);
+	// OnRep_ can use a paramater that uses the old value of the variable it is bound to. Very useful in this case to figure out the delta.
+	UFUNCTION()
+	void OnRep_Credits(int32 OldCredits);
+
+	//UFUNCTION(NetMulticast, Reliable) //@Fixme: Mark as Unreliable once we move the 'state' of our SCharacter.
+	//void MulticastCreditChanged(ASPlayerState* PlayerState, float NewCredits, float Delta);
 };

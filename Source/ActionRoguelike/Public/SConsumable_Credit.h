@@ -20,17 +20,8 @@ public:
 
 	void Interact_Implementation(APawn* InstigatorPawn);
 
-	//virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
 protected:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated, Category = "Consumables")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Consumables")
 	float CreditsAdded;
-
-	//UPROPERTY(ReplicatedUsing = "OnRep_bIsHidden", BlueprintReadOnly)
-	bool bIsHidden;
-
-	//UFUNCTION()
-	//void OnRep_bIsHidden();
-
 };

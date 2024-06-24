@@ -40,14 +40,14 @@ void ASGameModeBase::InitGame(const FString& MapName, const FString& Options, FS
 
 void ASGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer)
 {
-	Super::HandleStartingNewPlayer_Implementation(NewPlayer);
-
 	ASPlayerState* PS = NewPlayer->GetPlayerState<ASPlayerState>();
 	if (PS)
 	{		
 		PS->LoadPlayerState(CurrentSaveGame);
 		UE_LOG(LogTemp, Log, TEXT("Loaded player state. Credits: %f"), PS->GetCredits());
 	}
+
+	Super::HandleStartingNewPlayer_Implementation(NewPlayer);
 }
 
 void ASGameModeBase::StartPlay()

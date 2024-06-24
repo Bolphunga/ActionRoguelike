@@ -29,12 +29,6 @@ public:
 
 	void HideConsumable();
 
-	//UFUNCTION(Server, Reliable)
-	//void ServerShowConsumable();
-
-	//UFUNCTION(Server, Reliable)
-	//void ServerHideConsumable();
-
 	UFUNCTION(BlueprintCallable)
 	bool IsVisible() const;
 
@@ -42,6 +36,8 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Consumables")
 	UStaticMeshComponent* MeshComp;
+
+	FTimerHandle TimerHandle_ItemVisible;
 
 	UPROPERTY(ReplicatedUsing = "OnRep_IsVisible", BlueprintReadOnly)
 	bool bIsVisible;

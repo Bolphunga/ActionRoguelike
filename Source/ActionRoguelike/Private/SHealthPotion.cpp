@@ -2,11 +2,8 @@
 
 
 #include "SHealthPotion.h"
-#include "Components/StaticMeshComponent.h"
 #include "SAttributeComponent.h"
-#include "SInteractionComponent.h"
 #include "SPlayerState.h"
-#include "Net/UnrealNetwork.h"
 
 
 
@@ -39,12 +36,4 @@ void ASHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 				PS->ApplyCreditChange(HealthCost);
 		}
 	}
-}
-
-void ASHealthPotion::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(ASHealthPotion, HealAmount);
-	DOREPLIFETIME(ASHealthPotion, HealthCost);
 }

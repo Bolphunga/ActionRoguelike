@@ -52,8 +52,8 @@ protected:
 	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);
 
-	//UFUNCTION(NetMulticast, Reliable) //@Fixme: Mark as Unreliable once we move the 'state' of our SAICharacter.
-	//void MulticastPawnSeen(APawn* Pawn);
+	UFUNCTION(NetMulticast, Unreliable) 
+	void MulticastPawnSeen();
 
 	void PostInitializeComponents() override;
 

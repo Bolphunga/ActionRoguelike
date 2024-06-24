@@ -19,15 +19,39 @@ ASPlayerState::ASPlayerState()
 bool ASPlayerState::ApplyCreditChange(int32 Delta)
 {
 	Credits = FMath::Clamp(Credits + Delta, 0.0f, CreditMax);
-	MulticastCreditChanged(this, Credits, Delta);
+	//MulticastCreditChanged(this, Credits, Delta);
 	
 	return Delta != 0.0f;
 }
 
+//void ASPlayerState::MulticastCreditChanged_Implementation(ASPlayerState* PlayerState, float NewCredits, float Delta)
+//{
+//	OnCreditChanged.Broadcast(PlayerState, NewCredits, Delta);
+//}
 
-void ASPlayerState::MulticastCreditChanged_Implementation(ASPlayerState* PlayerState, float NewCredits, float Delta)
+
+
+void ASPlayerState::SavePlayerState_Implementation(USSaveGame* SaveObject)
 {
-	OnCreditChanged.Broadcast(PlayerState, NewCredits, Delta);
+	if (SaveObject)
+	{
+		//SaveObject->Credits = Credits;
+		// Make sure we trigger the credits changed event
+		ApplyCreditChange(SaveObject->Credits);
+	}
+}
+
+void ASPlayerState::LoadPlayerState_Implementation(USSaveGame* SaveObject)
+{
+	if (SaveObject)
+	{
+		Credits = SaveObject->Credits;
+	}
+}
+
+void ASPlayerState::OnRep_Credits(int32 OldCredits)
+{
+	OnCreditChanged.Broadcast(this, Credits, Credits - OldCredits);
 }
 
 int32 ASPlayerState::GetCredits() const
@@ -41,20 +65,4 @@ void ASPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 
 	DOREPLIFETIME(ASPlayerState, Credits);
 	DOREPLIFETIME(ASPlayerState, CreditMax);
-}
-
-void ASPlayerState::SavePlayerState_Implementation(USSaveGame* SaveObject)
-{
-	if (SaveObject)
-	{
-		SaveObject->Credits = Credits;
-	}
-}
-
-void ASPlayerState::LoadPlayerState_Implementation(USSaveGame* SaveObject)
-{
-	if (SaveObject)
-	{
-		Credits = SaveObject->Credits;
-	}
 }

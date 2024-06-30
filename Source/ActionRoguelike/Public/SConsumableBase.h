@@ -32,6 +32,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool IsVisible() const;
 
+	FText GetInteractText_Implementation(APawn* InstigatorPawn);
+
 protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Consumables")

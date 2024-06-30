@@ -10,7 +10,7 @@ ASConsumableBase::ASConsumableBase()
 {
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>("MeshComp");
 	MeshComp->SetCollisionProfileName("Consumable");
-	MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	//MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	RootComponent = MeshComp;
 
 	ItemCooldown = 10.0f;
@@ -22,6 +22,12 @@ ASConsumableBase::ASConsumableBase()
 void ASConsumableBase::Interact_Implementation(APawn* InstigatorPawn)
 {
 	// Shared logic here
+}
+
+
+FText ASConsumableBase::GetInteractText_Implementation(APawn* InstigatorPawn)
+{
+	return FText::GetEmpty();
 }
 
 void ASConsumableBase::HideConsumable()

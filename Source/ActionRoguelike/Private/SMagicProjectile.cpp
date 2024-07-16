@@ -16,6 +16,8 @@ ASMagicProjectile::ASMagicProjectile()
 	//SphereComp->SetCollisionObjectType(ECC_WorldDynamic);
 	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &ASMagicProjectile::OnActorOverlap);
 
+	InitialLifeSpan = 10.0f;
+
 	DamageAmount = -20.0f;
 }
 

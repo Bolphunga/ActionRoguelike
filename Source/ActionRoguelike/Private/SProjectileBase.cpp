@@ -15,8 +15,8 @@ ASProjectileBase::ASProjectileBase()
 {
 	SphereComp = CreateDefaultSubobject<USphereComponent>("SphereComp");
 	//SphereComp->SetCollisionObjectType(ECC_WorldDynamic);
-	SphereComp->OnComponentHit.AddDynamic(this, &ASProjectileBase::OnActorHit);
 	SphereComp->SetCollisionProfileName("Projectile");
+	SphereComp->OnComponentHit.AddDynamic(this, &ASProjectileBase::OnActorHit);
 	RootComponent = SphereComp;
 
 	EffectComp = CreateDefaultSubobject<UParticleSystemComponent>("EffectComp");

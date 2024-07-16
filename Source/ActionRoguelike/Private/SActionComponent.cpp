@@ -8,6 +8,8 @@
 #include "Engine/ActorChannel.h"
 
 
+//DECLARE_STATS_GROUP(TEXT("StartActionByName"), STAT_StartActionByName, STATGROUP_ACTIONROGUELIKE);
+DECLARE_STATS_GROUP(TEXT("StartActionByName"), STATGROUP_StartActionByName, STATCAT_ACTIONROGUELIKE);
 
 USActionComponent::USActionComponent()
 {
@@ -28,6 +30,21 @@ void USActionComponent::BeginPlay()
 			AddAction(GetOwner(), ActionClass);
 		}
 	}
+}
+
+void USActionComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	// Stop all actions
+	TArray<USAction*> ActionCopy = Actions;
+	for (USAction* Action : ActionCopy)
+	{
+		if (Action && Action->IsRunning())
+		{
+			Action->StopAction(GetOwner());
+		}
+	}
+
+	Super::EndPlay(EndPlayReason);
 }
 
 void USActionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -78,6 +95,8 @@ void USActionComponent::AddAction(AActor* Instigator, TSubclassOf<USAction> Acti
 
 bool USActionComponent::StartActionByName(AActor* Instigator, FName ActionName)
 {
+	//SCOPE_CYCLE_COUNTER(STAT_StartActionByName);
+	QUICK_SCOPE_CYCLE_COUNTER(STAT_StartActionByName);
 	for (USAction* Action : Actions)
 	{
 		if (Action && Action->ActionName == ActionName)
@@ -95,6 +114,8 @@ bool USActionComponent::StartActionByName(AActor* Instigator, FName ActionName)
 				ServerStartAction(Instigator, ActionName);
 			}
 
+			// Bookmark for Unreal Insights
+			TRACE_BOOKMARK(TEXT("StartAction: %s"), *GetNameSafe(Action));
 			Action->StartAction(Instigator);
 			return true;
 		}

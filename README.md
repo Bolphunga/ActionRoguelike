@@ -21,13 +21,21 @@
 
 ActionRoguelike/
 ├── Content/ # Unreal project content, Blueprints, assets
+
 ├── Source/ActionRoguelike/ # C++ source code
+
 │ ├── Characters/
+
 │ ├── Projectiles/
+
 │ ├── Actions/
+
 │ ├── UI/
+
 │ └── ...
+
 ├── ActionRoguelike.uproject
+
 └── README.md
 
 ---
@@ -38,48 +46,54 @@ ActionRoguelike/
 
    ```bash
    git clone https://github.com/Bolphunga/ActionRoguelike.git
-~~Open ActionRoguelike.uproject in Unreal Engine (UE5.x).
+~~Open ActionRoguelike.uproject in Unreal Engine (UE5.x).~~
 
-Let Unreal compile the C++ code and may prompt for building a Visual Studio (or Rider) project.
+~~Let Unreal compile the C++ code and may prompt for building a Visual Studio (or Rider) project.~~
 
-Hit Play in the editor to start testing.~~
+~~Hit Play in the editor to start testing.~~
 
-How to Use the Features
-Projectile Spread
+##  How to Use the Features
+- **Projectile Spread**
+
 To customize AI shooting spread:
 
 Modify MaxBulletSpreadDeg on the AI behavior tree task.
 
 Uses VRandCone for natural spread relative to aim direction.
 
-Thorns Effect
+- **Thorns Effect**
+
 When enabled via a chest pickup:
 
 Applies to the player.
 
 On taking damage, reflects a percentage of damage back at the attacker using a delegate-based OnHealthChanged.
 
-Damage Number UI
+- **Damage Number UI**
+
 Triggered directly in OnHealthChanged.
 
 Spawns a floating widget with the damage number.
 
 Self-destroys after animation.
 
-Cooker Safety
-Ensure assets referenced are always cooked:
 
-Use an “AssetCooker” actor that references enemy meshes, materials, and blueprint classes.
+## TLDR:
+It's a small map to showcase AI, Unreal's Gameplay Ability System, and other systems.
 
-Placed in persistent level to prevent asset stripping in packaged builds.
-
-Common Issues & Debugging Tips
-First hit shows zero damage: Often due to the first hit not applying damage or hitting another component. Check your ApplyHealthChange logic and projectile instigator setup.
-
-Multiplying delegate calls: Occurs when OnHealthChanged or delegates are bound multiple times without removing old bindings. Use RemoveAll(this) before adding.
+## Controls 
+WASD: Movement
+Q: Teleport/Dash Ability
+F: Blackhole Ability
 
 
-Contribution
+##  Common Issues & Debugging Tips
+* First hit shows zero damage: Often due to the first hit not applying damage or hitting another component. Check your ApplyHealthChange logic and projectile instigator setup.
+
+* Multiplying delegate calls: Occurs when OnHealthChanged or delegates are bound multiple times without removing old bindings. Use RemoveAll(this) before adding.
+
+
+- **Contribution**
 Bugs: If you find bugs—or encounter odd behaviors—please open an issue.
 
 Improvements: Interested in new effects, UI improvements, or optimization features? PRs are welcome!
